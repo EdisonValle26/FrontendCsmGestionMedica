@@ -1,0 +1,48 @@
+<nav class="bg-white shadow-md fixed w-full z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+            <img src="logo.jpg" class="w-15 h-15 rounded-full" />
+            <div>
+                <h1 class="text-xl font-bold text-blue-600">
+                    Clínica Santa Martha
+                </h1>
+                <span class="text-sm text-gray-600">
+                    Centro Médico Integral
+                </span>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div class="hidden md:flex gap-6 items-center">
+
+            <a href="#inicio" (click)="setActive('inicio')"
+                [ngClass]="activeSection === 'inicio' ? 'text-blue-600 font-bold' : 'hover:text-blue-600 transition'">
+                Inicio
+            </a>
+
+            <a href="#servicios" (click)="setActive('servicios')"
+                [ngClass]="activeSection === 'servicios' ? 'text-blue-600 font-bold' : 'hover:text-blue-600 transition'">
+                Servicios
+            </a>
+
+            <a href="#nosotros" (click)="setActive('nosotros')"
+                [ngClass]="activeSection === 'nosotros' ? 'text-blue-600 font-bold' : 'hover:text-blue-600 transition'">
+                Nosotros
+            </a>
+
+            <a href="#ubicacion" (click)="setActive('ubicacion')"
+                [ngClass]="activeSection === 'ubicacion' ? 'text-blue-600 font-bold' : 'hover:text-blue-600 transition'">
+                Ubicación
+            </a>
+
+            <!-- BOTÓN reutilizable -->
+            <a routerLink="/login">
+                <app-button>Ingresar</app-button>
+            </a>
+
+        </div>
+
+    </div>
+</nav>

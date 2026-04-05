@@ -1,0 +1,30 @@
+<!-- Botón flotante -->
+<button (click)="toggleChat()"
+    class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition">
+    <i class="fa-regular fa-comment-dots fa-lg"></i>
+</button>
+
+<!-- Ventana -->
+<div *ngIf="chat.isOpen" class="fixed bottom-25 right-6 w-80 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-blue-600 text-white p-3 font-semibold">
+        Asistente Virtual
+    </div>
+
+    <!-- Mensajes -->
+    <div class="p-3 h-60 overflow-y-auto text-sm space-y-2">
+        <p class="bg-gray-100 p-2 rounded">
+            Hola <i class="fa-solid fa-hand-peace" style="color: orange"></i> ¿En qué puedo ayudarte?
+        </p>
+    </div>
+
+    <!-- Input -->
+    <div class="p-2 border-t flex">
+        <input type="text" placeholder="Escribe..." class="flex-1 border rounded px-2 py-1 text-sm" />
+        <button class="ml-2 bg-blue-600 text-white px-3 rounded">
+            ➤
+        </button>
+    </div>
+
+</div>
