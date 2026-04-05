@@ -1,16 +1,25 @@
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  login(data: any) {
-    console.log('Login', data);
+  login(email: string, password: string) {
+
+    // llamada al backend
+    if (email === 'admin@test.com' && password === '1234') {
+
+      localStorage.setItem('token', 'fake-jwt-token');
+      return true;
+    }
+
+    return false;
+  }
+
+  isLogged(): boolean {
+    return !!localStorage.getItem('token');
   }
 
   logout() {
-    console.log('Logout');
+    localStorage.removeItem('token');
   }
-
 }

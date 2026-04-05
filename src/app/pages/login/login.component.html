@@ -6,18 +6,30 @@
             Iniciar Sesión
         </h2>
 
-        <form class="space-y-4">
+        <!-- Alerta -->
+        <!-- <div *ngIf="showAlert" class="mb-4">
+            <app-alert [type]="alertType" [message]="alertMessage">
+            </app-alert>
+        </div> -->
 
-            <input type="email" placeholder="Correo" class="w-full p-3 border rounded" />
+        <form (ngSubmit)="onLogin()" class="space-y-4">
 
-            <input type="password" placeholder="Contraseña" class="w-full p-3 border rounded" />
+            <input [(ngModel)]="email" name="email" type="email" placeholder="Correo"
+                class="w-full p-3 border rounded" />
 
-            <button class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700">
+            <input [(ngModel)]="password" name="password" type="password" placeholder="Contraseña"
+                class="w-full p-3 border rounded" />
+
+            <app-button type="submit" variant="primary" customClass="w-full mt-4">
                 Ingresar
-            </button>
+            </app-button>
 
         </form>
 
     </div>
 
 </div>
+
+<!-- <app-alert-modal [isOpen]="showModal" title="Error de autenticación" message="Credenciales incorrectas" type="error"
+    (close)="showModal = false" (confirm)="onConfirm()">
+</app-alert-modal> -->
