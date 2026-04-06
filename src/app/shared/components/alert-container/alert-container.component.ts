@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertMessage, AlertService } from '../../../core/services/alert.service';
+import { AlertMessage } from '../../../core/interface/alert-message.interface';
+import { AlertService } from '../../../core/services/alert.service';
 
 @Component({
   selector: 'app-alert-container',

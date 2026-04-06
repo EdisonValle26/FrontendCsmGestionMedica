@@ -1,1 +1,47 @@
-<p>dashboard works!</p>
+<div class="p-6 space-y-6">
+
+    <!-- BIENVENIDA -->
+    <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
+        <h2 class="text-2xl font-bold">Bienvenido</h2>
+        <p class="opacity-90">Gestiona tu clínica de forma rápida y eficiente</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <app-stat-card title="Citas Hoy" value="12" icon="fa-calendar-check" color="blue"></app-stat-card>
+
+        <app-stat-card title="Pacientes" value="85" icon="fa-users" color="green"></app-stat-card>
+
+        <app-stat-card title="Doctores" value="10" icon="fa-user-md" color="purple"></app-stat-card>
+
+    </div>
+
+    <!-- AGENDA + ACCIONES -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- AGENDA DEL DIA -->
+        <div class="md:col-span-2">
+            <app-day-agenda [appointments]="appointments"></app-day-agenda>
+        </div>
+
+        <!-- ACCIONES RAPIDAS -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border">
+            <h3 class="text-xl font-semibold mb-4">Acciones rápidas</h3>
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <app-quick-action label="Agendar cita" icon="fa-calendar-plus"></app-quick-action>
+
+                <app-quick-action label="Pacientes" icon="fa-users"></app-quick-action>
+
+                <app-quick-action label="Reportes" icon="fa-chart-line"></app-quick-action>
+
+                <app-quick-action label="Doctores" icon="fa-user-md"></app-quick-action>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

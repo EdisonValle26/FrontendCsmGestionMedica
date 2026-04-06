@@ -1,0 +1,58 @@
+<aside class="h-screen bg-white border-r shadow-sm flex flex-col transition-all duration-300"
+    [ngClass]="isOpen ? 'w-64 p-6' : 'w-20 p-3'">
+
+    <div class="space-y-6">
+
+        <!-- BRAND -->
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow">
+                <img src="logo.jpg" class="rounded-full" />
+            </div>
+
+            <div *ngIf="isOpen">
+                <h2 class="text-lg font-bold">Santa Martha</h2>
+                <p class="text-xs text-gray-500">Sistema Integrado</p>
+            </div>
+        </div>
+
+        <!-- USER -->
+        <div *ngIf="isOpen" class="bg-gray-50 p-3 rounded-xl border">
+            <p class="text-sm font-semibold text-gray-800">{{ userName }}</p>
+            <p class="text-xs text-gray-500">{{ role }}</p>
+        </div>
+
+    </div>
+
+    <!-- NAV -->
+    <nav class="mt-6 space-y-2 flex-1 overflow-y-auto">
+
+        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
+            class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
+            <i class="fas fa-tachometer-alt"></i>
+            <span *ngIf="isOpen">Dashboard</span>
+        </a>
+
+        <a class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
+            <i class="fas fa-calendar-alt"></i>
+            <span *ngIf="isOpen">Citas</span>
+        </a>
+
+        <a class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
+            <i class="fas fa-users"></i>
+            <span *ngIf="isOpen">Pacientes</span>
+        </a>
+
+    </nav>
+
+    <!-- LOGOUT -->
+    <div class="pt-4 border-t">
+        <button (click)="logout()"
+            class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-red-50 text-red-500 transition">
+
+            <i class="fas fa-sign-out-alt"></i>
+            <span *ngIf="isOpen">Cerrar sesión</span>
+
+        </button>
+    </div>
+
+</aside>

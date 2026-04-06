@@ -1,0 +1,43 @@
+<div class="bg-white p-6 rounded-2xl shadow-sm border h-full flex flex-col">
+
+    <!-- HEADER -->
+    <div class="mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Agenda del día</h3>
+        <p class="text-sm text-gray-400">
+            {{ appointments.length }} citas programadas
+        </p>
+    </div>
+
+    <!-- LISTA -->
+    <div class="flex flex-col gap-3">
+
+        <div *ngFor="let appt of appointments"
+            class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition cursor-pointer">
+
+            <!-- HORA -->
+            <div class="min-w-15 text-center">
+                <div class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">
+                    {{ appt.time }}
+                </div>
+            </div>
+
+            <!-- INFO -->
+            <div class="flex-1">
+                <div class="text-sm font-semibold text-gray-800">
+                    {{ appt.patient }}
+                </div>
+                <div class="text-xs text-gray-500">
+                    {{ appt.specialty }} · {{ appt.doctor }}
+                </div>
+            </div>
+
+            <!-- STATUS -->
+            <div class="text-xs font-semibold px-3 py-1 rounded-full border" [ngClass]="getStatusClass(appt.status)">
+                {{ appt.status }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

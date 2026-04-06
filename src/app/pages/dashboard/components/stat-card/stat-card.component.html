@@ -1,0 +1,20 @@
+<div class="bg-white p-5 rounded-2xl border shadow-sm hover:shadow-md transition border-t-4"
+    [ngClass]="getBorderColor()">
+
+    <div class="flex items-center justify-between mb-3">
+
+        <div class="text-sm text-gray-500">
+            {{ title }}
+        </div>
+
+        <div class="p-2 rounded-lg" [ngClass]="getColor()">
+            <i class="fa-solid" [ngClass]="icon"></i>
+        </div>
+
+    </div>
+
+    <div class="text-3xl font-bold text-gray-800">
+        {{ value }}
+    </div>
+
+</div>
