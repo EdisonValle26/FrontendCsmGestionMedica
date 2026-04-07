@@ -1,7 +1,10 @@
+export type AppointmentStatus = 'confirmada' | 'pendiente' | 'urgente';
 export interface Appointment {
+    id?: number;
+    date?: string;
     time: string;
     patient: string;
-    specialty: string;
     doctor: string;
-    status: 'confirmada' | 'pendiente' | 'urgente';
+    specialty: string;
+    status: AppointmentStatus;
 }

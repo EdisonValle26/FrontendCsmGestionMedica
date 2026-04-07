@@ -17,7 +17,7 @@ export class ButtonComponent {
 
     const styles = {
       primary: 'bg-blue-600 text-white hover:bg-blue-700',
-      secondary: 'bg-gray-600 text-white hover:bg-gray-700',
+      secondary: 'bg-gray-200 text-black hover:bg-gray-300',
       outline: 'border border-blue-600 text-blue-600 hover:bg-blue-100',
       cancel: 'border border-red-600 text-red-600 hover:bg-red-100'
     };

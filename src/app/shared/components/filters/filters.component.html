@@ -1,0 +1,31 @@
+<div class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-3 items-end">
+
+    <form [formGroup]="form" class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-3 items-end">
+
+        <div *ngFor="let f of filters" class="flex flex-col">
+
+            <label class="text-xs text-gray-500">{{ f.label }}</label>
+
+            <!-- TEXT -->
+            <input *ngIf="f.type === 'text'" [formControlName]="f.name" class="border p-2 rounded" />
+
+            <!-- DATE -->
+            <input *ngIf="f.type === 'date'" type="date" [formControlName]="f.name" class="border p-2 rounded" />
+
+            <!-- SELECT -->
+            <select *ngIf="f.type === 'select'" [formControlName]="f.name" class="border p-2 rounded">
+                <option value="">Todos</option>
+                <option *ngFor="let opt of f.options" [value]="opt.value">
+                    {{ opt.label }}
+                </option>
+            </select>
+
+        </div>
+
+        <app-button variant="secondary" (click)="clear()">
+            Limpiar
+        </app-button>
+
+    </form>
+
+</div>

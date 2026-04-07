@@ -1,1 +1,35 @@
-<p>appointments works!</p>
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Gestión de Citas</h1>
+    <app-button variant="primary" (click)="openCreate()">
+        Nueva Cita
+    </app-button>
+</div>
+
+<!-- FILTROS -->
+<app-filters
+  [filters]="filtersConfig"
+  (filterChange)="onFilter($event)">
+</app-filters>
+
+<!-- TABLA -->
+<app-table
+  [data]="appointments"
+  [columns]="columns"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)">
+</app-table>
+
+<!-- MODAL -->
+<app-modal-container
+  [title]="selectedAppointment ? 'Editar Cita' : 'Nueva Cita'"
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedAppointment"
+  (submitForm)="onSave($event)">
+</app-form>
+
+</app-modal-container>

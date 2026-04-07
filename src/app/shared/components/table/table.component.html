@@ -1,0 +1,58 @@
+<table class="w-full bg-white rounded-xl shadow">
+
+    <thead class="bg-gray-50">
+        <tr>
+            <th *ngFor="let col of columns" class="p-3 text-left text-sm text-gray-600">
+                {{ col.label }}
+            </th>
+            <th class="p-3 text-center">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        <tr *ngIf="loading">
+            <td colspan="100%" class="text-center p-6">Cargando...</td>
+        </tr>
+
+        <tr *ngIf="!loading && data.length === 0">
+            <td colspan="100%" class="text-center p-6 text-gray-400">
+                No hay datos
+            </td>
+        </tr>
+
+        <tr *ngFor="let row of data" class="border-t hover:bg-gray-50">
+
+            <td *ngFor="let col of columns" class="p-3">
+
+                <!-- FORMATO -->
+                <ng-container *ngIf="col.format">
+                    {{ col.format(row[col.field]) }}
+                </ng-container>
+
+                <!-- TEXTO -->
+                <ng-container *ngIf="!col.format && col.type !== 'badge'">
+                    {{ row[col.field] }}
+                </ng-container>
+
+                <!-- BADGE -->
+                <span *ngIf="col.type === 'badge'" class="px-2 py-1 text-xs rounded-full" [ngClass]="{
+                        'bg-yellow-100 text-yellow-600': row[col.field] === 'pendiente',
+                        'bg-green-100 text-green-600': row[col.field] === 'confirmada',
+                        'bg-red-100 text-red-600': row[col.field] === 'urgente'
+                    }">
+                    {{ row[col.field] }}
+                </span>
+
+            </td>
+
+            <td class="p-3 text-center space-x-2">
+                <button (click)="edit.emit(row)"><i class="fa-solid fa-pen-to-square" style="color: rgb(19, 142, 241)"></i></button>
+                <button (click)="delete.emit(row.id)"><i class="fa-solid fa-trash-can" style="color: rgb(192, 6, 6)"></i></button>
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>

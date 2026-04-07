@@ -1,0 +1,38 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-3">
+
+    <div *ngFor="let field of fields">
+
+        <label class="text-sm text-gray-600">{{ field.label }}</label>
+
+        <!-- TEXT -->
+        <input *ngIf="field.type === 'text'" [formControlName]="field.name" class="w-full border p-2 rounded" />
+
+        <!-- DATE -->
+        <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name"
+            class="w-full border p-2 rounded" />
+
+        <!-- TIME -->
+        <input *ngIf="field.type === 'time'" type="time" [formControlName]="field.name"
+            class="w-full border p-2 rounded" />
+
+        <!-- SELECT -->
+        <select *ngIf="field.type === 'select'" [formControlName]="field.name" class="w-full border p-2 rounded">
+
+            <option *ngFor="let opt of field.options" [value]="opt.value">
+                {{ opt.label }}
+            </option>
+
+        </select>
+
+        <!-- ERROR -->
+        <div *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched" class="text-red-500 text-xs">
+            Campo requerido
+        </div>
+
+    </div>
+
+    <app-button type="submit" variant="primary" customClass="w-full mt-4">
+        Guardar
+    </app-button>
+
+</form>
