@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormField } from '../../../core/interface/form-field.interface';
 
 @Component({
@@ -34,14 +34,27 @@ export class FormComponent implements OnChanges {
     const group: any = {};
 
     this.fields.forEach(field => {
-      group[field.name] = [this.data?.[field.name] ?? ''];
+
+      const validators = [];
+
+      if (field.required) {
+        validators.push(Validators.required);
+      }
+
+      group[field.name] = [
+        this.data?.[field.name] ?? '',
+        validators
+      ];
     });
 
     this.form = this.fb.group(group);
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.submitForm.emit(this.form.value);
   }

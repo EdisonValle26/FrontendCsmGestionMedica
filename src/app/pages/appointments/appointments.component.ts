@@ -37,6 +37,7 @@ export class AppointmentsComponent {
       name: 'status',
       label: 'Estado',
       type: 'select',
+      required: true,
       options: [
         { label: 'Pendiente', value: 'pendiente' },
         { label: 'Confirmada', value: 'confirmada' },
