@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,14 +13,23 @@ export class SidebarComponent {
   @Input() isOpen = true;
   @Output() toggle = new EventEmitter<void>();
 
-  userName = 'Dr. Andrés';
-  role = 'Administrador';
+  user: any;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private auth: AuthService
+  ) { }
+
+  ngOnInit() {
+    this.user = this.auth.getUser();
+  }
 
   logout() {
-    // aquí luego limpias token
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
 
+  isExactRoute(route: string): boolean {
+    return route === '/dashboard';
+  }
 }

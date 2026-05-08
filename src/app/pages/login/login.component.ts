@@ -60,13 +60,27 @@ export class LoginComponent {
   }
 
   onLogin() {
-    const success = this.auth.login(this.email, this.password);
 
-    if (success) {
-      this.alert.success('Bienvenido 👨‍⚕️');
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.alert.error('Credenciales incorrectas');
-    }
+    this.auth.login(this.email, this.password)
+      .subscribe({
+
+        next: () => {
+
+          this.alert.success('Bienvenido 👨‍⚕️');
+
+          this.router.navigate(['/dashboard']);
+
+        },
+
+        error: (err) => {
+
+          this.alert.error(
+            err?.error?.message || 'Credenciales incorrectas'
+          );
+
+        }
+
+      });
+
   }
 }

@@ -17,8 +17,8 @@
 
         <!-- USER -->
         <div *ngIf="isOpen" class="bg-gray-50 p-3 rounded-xl border">
-            <p class="text-sm font-semibold text-gray-800">{{ userName }}</p>
-            <p class="text-xs text-gray-500">{{ role }}</p>
+            <p class="text-sm font-semibold text-gray-800">{{ user?.fullName }}</p>
+            <p class="text-xs text-gray-500">{{ user?.roles?.[0] }}</p>
         </div>
 
     </div>
@@ -26,23 +26,17 @@
     <!-- NAV -->
     <nav class="mt-6 space-y-2 flex-1 overflow-y-auto">
 
-        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
-            [routerLinkActiveOptions]="{ exact: true }"
+        <a *ngFor="let option of user?.options" [routerLink]="option.route"
+            routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
+            [routerLinkActiveOptions]="{ exact: isExactRoute(option.route) }"
             class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
 
-            <i class="fas fa-tachometer-alt"></i>
-            <span *ngIf="isOpen">Dashboard</span>
-        </a>
-        
-        <a routerLink="/dashboard/citas" routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
-            class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
-            <i class="fas fa-calendar-alt"></i>
-            <span *ngIf="isOpen">Citas</span>
-        </a>
+            <i [class]="'fas fa-' + option.icon"></i>
 
-        <a class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
-            <i class="fas fa-users"></i>
-            <span *ngIf="isOpen">Pacientes</span>
+            <span *ngIf="isOpen">
+                {{ option.name }}
+            </span>
+
         </a>
 
     </nav>

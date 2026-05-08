@@ -1,10 +1,10 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { AppointmentsComponent } from './pages/appointments/appointments.component';
@@ -58,8 +58,12 @@ import { TopbarComponent } from './shared/components/topbar/topbar.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+  ],
+  providers: [
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
