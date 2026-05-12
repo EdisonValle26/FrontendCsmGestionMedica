@@ -1,0 +1,35 @@
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Gestión de Pacientes</h1>
+    <app-button variant="primary" (click)="openCreate()">
+        Nuevo Paciente
+    </app-button>
+</div>
+
+<!-- FILTROS -->
+<app-filters
+  [filters]="filtersConfig"
+  (filterChange)="onFilter($event)">
+</app-filters>
+
+<!-- TABLA -->
+<app-table
+  [data]="patients"
+  [columns]="columns"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)">
+</app-table>
+
+<!-- MODAL -->
+<app-modal-container
+  [title]="selectedPatients ? 'Editar Paciente' : 'Nuevo Paciente'"
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedPatients"
+  (submitForm)="onSave($event)">
+</app-form>
+
+</app-modal-container>

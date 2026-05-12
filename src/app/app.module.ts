@@ -7,13 +7,23 @@ import { AppComponent } from './app.component';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
+import { AppointmentsCalendarComponent } from './pages/appointments-calendar/appointments-calendar.component';
 import { AppointmentsComponent } from './pages/appointments/appointments.component';
+import { CatalogsComponent } from './pages/catalogs/catalogs.component';
 import { DayAgendaComponent } from './pages/dashboard/components/day-agenda/day-agenda.component';
 import { QuickActionComponent } from './pages/dashboard/components/quick-action/quick-action.component';
 import { StatCardComponent } from './pages/dashboard/components/stat-card/stat-card.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DoctorSchedulesComponent } from './pages/doctor-schedules/doctor-schedules.component';
+import { DoctorsComponent } from './pages/doctors/doctors.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
+import { MedicalRecordsComponent } from './pages/medical-records/medical-records.component';
+import { OptionsComponent } from './pages/options/options.component';
+import { PatientsComponent } from './pages/patients/patients.component';
+import { RolesComponent } from './pages/roles/roles.component';
+import { SpecialtiesComponent } from './pages/specialties/specialties.component';
+import { UsersComponent } from './pages/users/users.component';
 import { AlertContainerComponent } from './shared/components/alert-container/alert-container.component';
 import { AlertModalComponent } from './shared/components/alert-modal/alert-modal.component';
 import { AlertComponent } from './shared/components/alert/alert.component';
@@ -52,6 +62,16 @@ import { TopbarComponent } from './shared/components/topbar/topbar.component';
     FormComponent,
     FiltersComponent,
     ModalContainerComponent,
+    AppointmentsCalendarComponent,
+    CatalogsComponent,
+    DoctorSchedulesComponent,
+    DoctorsComponent,
+    MedicalRecordsComponent,
+    OptionsComponent,
+    PatientsComponent,
+    RolesComponent,
+    SpecialtiesComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,
