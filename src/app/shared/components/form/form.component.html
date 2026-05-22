@@ -7,6 +7,9 @@
         <!-- TEXT -->
         <input *ngIf="field.type === 'text'" [formControlName]="field.name" class="w-full border p-2 rounded" />
 
+        <textarea *ngIf="field.type === 'textarea'" [formControlName]="field.name" class="w-full border p-2 rounded">
+        </textarea>
+
         <!-- DATE -->
         <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name"
             class="w-full border p-2 rounded" />

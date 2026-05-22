@@ -15,6 +15,13 @@
 <app-table
   [data]="patients"
   [columns]="columns"
+  [loading]="loading"
+  [total]="totalPatients"
+  [page]="page"
+  [take]="take"
+  [takeOptions]="takeOptions"
+  (pageChange)="onPageChange($event)"
+  (takeChange)="onTakeChange($event)"
   (edit)="onEdit($event)"
   (delete)="onDelete($event)">
 </app-table>
@@ -33,3 +40,12 @@
 </app-form>
 
 </app-modal-container>
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  title="Eliminar paciente"
+  message="¿Está seguro de eliminar este paciente?"
+  type="warning"
+  (close)="showDeleteModal = false"
+  (confirm)="confirmDelete()">
+</app-alert-modal>

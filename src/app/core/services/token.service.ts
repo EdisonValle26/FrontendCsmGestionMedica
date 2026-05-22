@@ -38,4 +38,12 @@ export class TokenService {
     this.removeToken();
     this.removeUser();
   }
+
+  isLogged(): boolean {
+    return !!this.getToken();
+  }
+
+  getRoles(): string[] {
+    return this.getUser()?.roles || [];
+  }
 }

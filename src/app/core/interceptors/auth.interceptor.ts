@@ -1,9 +1,5 @@
-import {
-    HttpInterceptorFn
-} from '@angular/common/http';
-
+import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-
 import { TokenService } from '../services/token.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -12,11 +8,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     const token = tokenService.getToken();
 
-    if (token) {
+    // endpoints públicos
+    const publicUrls = [
+        '/auth/login',
+        '/auth/reset-password'
+    ];
+
+    const isPublic = publicUrls.some(url =>
+        req.url.includes(url)
+    );
+
+    if (token && !isPublic) {
 
         req = req.clone({
             setHeaders: {
-                Authorization: `Bearer ${token}`
+                Authorization: `${token}`
             }
         });
 

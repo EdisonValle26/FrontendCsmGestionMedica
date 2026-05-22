@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { Appointment } from '../../core/interface/appointment.interface';
 import { FilterField } from '../../core/interface/filter-field.interface';
 import { FormField } from '../../core/interface/form-field.interface';
+import { Patient } from '../../core/interface/patient.interface';
 import { TableColumn } from '../../core/interface/table-column.interface';
 import { AlertService } from '../../core/services/alert.service';
-import { AppointmentsService } from '../../core/services/appointment.service';
+import { PatientsService } from '../../core/services/patients.service';
 
 @Component({
   selector: 'app-patients',
@@ -14,56 +14,54 @@ import { AppointmentsService } from '../../core/services/appointment.service';
 })
 export class PatientsComponent {
 
-  patients: Appointment[] = [];
-
-  selectedPatients: Appointment | null = null;
+  patients: Patient[] = [];
+  selectedPatients: any = null;
   isModalOpen = false;
+  loading = false;
 
   columns: TableColumn[] = [
-    { label: 'Identificación', field: 'specialty' },
+    { label: 'Identificación', field: 'identification' },
     { label: 'Paciente', field: 'patient' },
-    { label: 'Teléfono', field: 'time' },
-    { label: 'Correo', field: 'doctor' },
-    { label: 'Tipo de Identificación', field: 'status', type: 'badge' }
+    { label: 'Teléfono', field: 'phone' },
+    { label: 'Correo', field: 'email' },
+    { label: 'Historial', field: 'medical_history' }
   ];
 
   formFields: FormField[] = [
-    { name: 'specialty', label: 'Identificación', type: 'text', required: true },
-    { name: 'patient', label: 'Paciente', type: 'text', required: true },
-    { name: 'time', label: 'Teléfono', type: 'time', required: true },
-    { name: 'doctor', label: 'Correo', type: 'text', required: true },
-    {
-      name: 'status',
-      label: 'Tipo de Identificación',
-      type: 'select',
-      required: true,
-      options: [
-        { label: 'Cédula', value: 'cedula' },
-        { label: 'RUC', value: 'ruc' },
-        { label: 'Pasaporte', value: 'pasaporte' }
-      ]
-    }
+    { name: 'identification', label: 'Identificación', type: 'text', required: true },
+    { name: 'first_name', label: 'Nombres', type: 'text', required: true },
+    { name: 'last_name', label: 'Apellidos', type: 'text', required: true },
+    { name: 'phone', label: 'Teléfono', type: 'text' },
+    { name: 'email', label: 'Correo', type: 'text' },
+    { name: 'address', label: 'Dirección', type: 'text' },
+    { name: 'medical_history', label: 'Historial Médico', type: 'textarea' }
   ];
 
   filtersConfig: FilterField[] = [
-    { name: 'patient', label: 'Paciente', type: 'text' },
-    {
-      name: 'status',
-      label: 'Tipo de Identificación',
-      type: 'select',
-      options: [
-        { label: 'Cédula', value: 'cedula' },
-        { label: 'RUC', value: 'ruc' },
-        { label: 'Pasaporte', value: 'pasaporte' }
-      ]
-    }
+    { name: 'value_field', label: 'Buscar paciente', type: 'text' }
   ];
 
-  currentFilters: any = {};
+  currentFilters: any = {
+    skip: 1,
+    take: 5,
+    status: 'A',
+    field: 'name'
+  };
+
+  /* PAGINACIÓN */
+  totalPatients = 0;
+  page = 1;
+  take = 5;
+  takeOptions = [5, 10, 25, 50];
+
+  /* DELETE MODAL */
+  showDeleteModal = false;
+  patientIdToDelete: number | null = null;
+
 
   constructor(
-    private serviceAppointment: AppointmentsService,
-    private alertService: AlertService,
+    private servicePatients: PatientsService,
+    private alertService: AlertService
   ) { }
 
   ngOnInit() {
@@ -71,9 +69,45 @@ export class PatientsComponent {
   }
 
   loadPatients() {
-    this.serviceAppointment.getAll(this.currentFilters).subscribe(res => {
-      this.patients = [...res];
-    });
+
+    this.loading = true;
+    this.currentFilters.skip = this.page;
+    this.currentFilters.take = this.take;
+
+    this.servicePatients
+      .getAll(this.currentFilters)
+      .subscribe({
+
+        next: (res) => {
+
+          this.totalPatients = res.total || 0;
+          this.page = res.page || 1;
+          this.take = res.limit || 5;
+          this.patients = res.data.map((item: any) => {
+
+            return {
+
+              id: item.id,
+              identification: item.persons?.identification || '',
+              first_name: item.persons?.first_name || '',
+              last_name: item.persons?.last_name || '',
+              patient: `${item.persons?.first_name || ''} ${item.persons?.last_name || ''}`,
+              phone: item.persons?.phone || '',
+              email: item.persons?.email || '',
+              address: item.persons?.address || '',
+              medical_history: item.medical_history || ''
+            };
+          });
+          this.loading = false;
+        },
+
+        error: () => {
+          this.loading = false;
+          this.alertService.error(
+            'Error al cargar pacientes'
+          );
+        }
+      });
   }
 
   openCreate() {
@@ -81,45 +115,122 @@ export class PatientsComponent {
     this.isModalOpen = true;
   }
 
-  onEdit(app: Appointment) {
-    this.selectedPatients = { ...app };
+  onEdit(patient: any) {
+    this.selectedPatients = {
+      ...patient
+    };
     this.isModalOpen = true;
   }
 
-  onSave(app: Appointment) {
-    if (this.selectedPatients?.id) {
-      app.id = this.selectedPatients.id;
+  onSave(data: Patient) {
 
-      this.serviceAppointment.update(app).subscribe(() => {
-        this.alertService.success('Paciente actualizado correctamente');
-        this.loadPatients();
-        this.isModalOpen = false;
-        this.selectedPatients = null;
-      });
+    const payload = {
+      identification: data.identification,
+      document_type_id: 1,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      birth_date: '1995-01-01',
+      gender_id: 1,
+      nationality_id: 1,
+      phone: data.phone,
+      email: data.email,
+      address: data.address,
+      medical_history: data.medical_history
+    };
+
+    if (this.selectedPatients?.id) {
+
+      this.servicePatients
+        .update(this.selectedPatients.id, payload)
+        .subscribe({
+
+          next: () => {
+            this.alertService.success(
+              'Paciente actualizado correctamente'
+            );
+            this.loadPatients();
+            this.isModalOpen = false;
+
+          },
+
+          error: () => {
+            this.alertService.error(
+              'Error al actualizar paciente'
+            );
+          }
+        });
 
     } else {
-      this.serviceAppointment.create(app).subscribe(() => {
-        this.alertService.success('Paciente creado correctamente');
-        this.loadPatients();
-        this.isModalOpen = false;
-        this.selectedPatients = null;
-      });
+
+      this.servicePatients
+        .create(payload)
+        .subscribe({
+
+          next: () => {
+            this.alertService.success(
+              'Paciente creado correctamente'
+            );
+            this.loadPatients();
+            this.isModalOpen = false;
+          },
+
+          error: () => {
+            this.alertService.error(
+              'Error al crear paciente'
+            );
+          }
+        });
     }
   }
 
   onDelete(id: number) {
-    this.serviceAppointment.delete(id).subscribe(res => {
-      this.patients = [...res];
-      this.alertService.success('Paciente eliminado correctamente');
-    });
+    this.patientIdToDelete = id;
+    this.showDeleteModal = true;
   }
 
   onFilter(filters: any) {
-    this.currentFilters = filters;
+    this.currentFilters = {
+      ...this.currentFilters,
+      value_field: filters.value_field
+    };
+    this.loadPatients();
+  }
 
-    this.serviceAppointment.getAll(filters).subscribe(res => {
-      this.patients = [...res];
-    });
+  onPageChange(page: number) {
+    this.page = page;
+    this.loadPatients();
+  }
+
+  onTakeChange(take: number) {
+    this.take = take;
+    this.page = 1;
+    this.loadPatients();
+
+  }
+  confirmDelete() {
+
+    if (!this.patientIdToDelete) {
+      return;
+    }
+
+    this.servicePatients
+      .delete(this.patientIdToDelete)
+      .subscribe({
+
+        next: () => {
+          this.alertService.success(
+            'Paciente eliminado correctamente'
+          );
+          this.loadPatients();
+          this.showDeleteModal = false;
+        },
+
+        error: () => {
+          this.alertService.error(
+            'Error al eliminar paciente'
+          );
+        }
+      });
   }
 
 }
