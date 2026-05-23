@@ -1,31 +1,33 @@
-<div class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-3 items-end">
+<form [formGroup]="form" class="w-full bg-white p-4 rounded-xl shadow mb-4 flex gap-3 items-end">
 
-    <form [formGroup]="form" class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-3 items-end">
+    <div *ngFor="let f of filters" class="w-full flex flex-col">
 
-        <div *ngFor="let f of filters" class="flex flex-col">
+        <label class="text-xs text-gray-500">{{ f.label }}</label>
 
-            <label class="text-xs text-gray-500">{{ f.label }}</label>
+        <!-- TEXT -->
+        <div class="relative" *ngIf="f.type === 'text'">
+            <i class="fas fa-search absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-400"></i>
+            <input placeholder="Buscar..." [formControlName]="f.name" class="border p-2 pl-10 rounded w-full" />
+        </div>
 
-            <!-- TEXT -->
-            <input *ngIf="f.type === 'text'" [formControlName]="f.name" class="border p-2 rounded" />
+        <!-- DATE -->
+        <input *ngIf="f.type === 'date'" type="date" [formControlName]="f.name" class="border p-2 rounded" />
 
-            <!-- DATE -->
-            <input *ngIf="f.type === 'date'" type="date" [formControlName]="f.name" class="border p-2 rounded" />
-
-            <!-- SELECT -->
-            <select *ngIf="f.type === 'select'" [formControlName]="f.name" class="border p-2 rounded">
+        <!-- SELECT -->
+        <div class="relative" *ngIf="f.type === 'select'">
+            <i class="fas fa-chevron-down absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-400"></i>
+            <select [formControlName]="f.name" class="border p-2 pl-10 rounded w-full appearance-none">
                 <option value="">Todos</option>
                 <option *ngFor="let opt of f.options" [value]="opt.value">
                     {{ opt.label }}
                 </option>
             </select>
-
         </div>
 
-        <app-button variant="secondary" (click)="clear()">
-            Limpiar
-        </app-button>
+    </div>
 
-    </form>
+    <app-button variant="secondary" (click)="clear()">
+        Limpiar
+    </app-button>
 
-</div>
+</form>

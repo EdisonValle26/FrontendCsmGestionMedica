@@ -31,14 +31,64 @@ export class FormComponent implements OnChanges {
   }
 
   buildForm() {
+
     const group: any = {};
 
     this.fields.forEach(field => {
 
       const validators = [];
 
+      /* REQUIRED */
       if (field.required) {
         validators.push(Validators.required);
+      }
+
+      /* MIN LENGTH */
+      if (field.minLength) {
+        validators.push(
+          Validators.minLength(field.minLength)
+        );
+      }
+
+      /* MAX LENGTH */
+      if (field.maxLength) {
+        validators.push(
+          Validators.maxLength(field.maxLength)
+        );
+      }
+
+      /* INPUT TYPES */
+      switch (field.inputType) {
+
+        case 'number':
+          validators.push(
+            Validators.pattern(/^[0-9]*$/)
+          );
+          break;
+
+        case 'decimal':
+          validators.push(
+            Validators.pattern(/^\d+(\.\d{1,2})?$/)
+          );
+          break;
+
+        case 'email':
+          validators.push(
+            Validators.email
+          );
+          break;
+
+        case 'letters':
+          validators.push(
+            Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/)
+          );
+          break;
+
+        case 'alphanumeric':
+          validators.push(
+            Validators.pattern(/^[a-zA-Z0-9\s]*$/)
+          );
+          break;
       }
 
       group[field.name] = [
@@ -57,5 +107,44 @@ export class FormComponent implements OnChanges {
     }
 
     this.submitForm.emit(this.form.value);
+  }
+
+
+  onInput(event: any, field: FormField) {
+
+    let value = event.target.value;
+
+    switch (field.inputType) {
+
+      /* SOLO NÚMEROS */
+      case 'number':
+        value = value.replace(/[^0-9]/g, '');
+        break;
+
+      /* DECIMALES */
+      case 'decimal':
+        value = value.replace(/[^0-9.]/g, '');
+        break;
+
+      /* SOLO LETRAS */
+      case 'letters':
+        value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        break;
+
+      /* ALFANUMÉRICO */
+      case 'alphanumeric':
+        value = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s#.,-]/g, '');
+        break;
+    }
+
+    /* MAX LENGTH */
+    if (field.maxLength) {
+      value = value.substring(0, field.maxLength);
+    }
+
+    this.form.get(field.name)?.setValue(
+      value,
+      { emitEvent: false }
+    );
   }
 }

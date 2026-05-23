@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FilterField } from '../../core/interface/filter-field.interface';
 import { FormField } from '../../core/interface/form-field.interface';
@@ -24,17 +25,17 @@ export class PatientsComponent {
     { label: 'Paciente', field: 'patient' },
     { label: 'Teléfono', field: 'phone' },
     { label: 'Correo', field: 'email' },
-    { label: 'Historial', field: 'medical_history' }
+    { label: 'Dirección', field: 'address' }
   ];
 
   formFields: FormField[] = [
-    { name: 'identification', label: 'Identificación', type: 'text', required: true },
-    { name: 'first_name', label: 'Nombres', type: 'text', required: true },
-    { name: 'last_name', label: 'Apellidos', type: 'text', required: true },
-    { name: 'phone', label: 'Teléfono', type: 'text' },
-    { name: 'email', label: 'Correo', type: 'text' },
-    { name: 'address', label: 'Dirección', type: 'text' },
-    { name: 'medical_history', label: 'Historial Médico', type: 'textarea' }
+    { name: 'identification', label: 'Identificación', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },
+    { name: 'first_name', label: 'Nombres', type: 'text', inputType: 'letters', required: true },
+    { name: 'last_name', label: 'Apellidos', type: 'text', inputType: 'letters', required: true },
+    { name: 'phone', label: 'Teléfono', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },
+    { name: 'email', label: 'Correo', type: 'text', inputType: 'email', required: true },
+    { name: 'address', label: 'Dirección', type: 'text', inputType: 'alphanumeric', required: true },
+    { name: 'birth_date', label: 'Fecha de Nacimiento', type: 'date', required: true },
   ];
 
   filtersConfig: FilterField[] = [
@@ -45,7 +46,7 @@ export class PatientsComponent {
     skip: 1,
     take: 5,
     status: 'A',
-    field: 'name'
+    field: ['first_name', 'last_name', 'identification', 'email', 'phone', 'address']
   };
 
   /* PAGINACIÓN */
@@ -61,7 +62,8 @@ export class PatientsComponent {
 
   constructor(
     private servicePatients: PatientsService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit() {
@@ -86,7 +88,6 @@ export class PatientsComponent {
           this.patients = res.data.map((item: any) => {
 
             return {
-
               id: item.id,
               identification: item.persons?.identification || '',
               first_name: item.persons?.first_name || '',
@@ -95,7 +96,7 @@ export class PatientsComponent {
               phone: item.persons?.phone || '',
               email: item.persons?.email || '',
               address: item.persons?.address || '',
-              medical_history: item.medical_history || ''
+              birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : ''
             };
           });
           this.loading = false;
@@ -129,13 +130,12 @@ export class PatientsComponent {
       document_type_id: 1,
       first_name: data.first_name,
       last_name: data.last_name,
-      birth_date: '1995-01-01',
+      birth_date: data.birth_date,
       gender_id: 1,
       nationality_id: 1,
       phone: data.phone,
       email: data.email,
       address: data.address,
-      medical_history: data.medical_history
     };
 
     if (this.selectedPatients?.id) {
@@ -191,7 +191,7 @@ export class PatientsComponent {
   onFilter(filters: any) {
     this.currentFilters = {
       ...this.currentFilters,
-      value_field: filters.value_field
+      value_field: filters.value_field || ''
     };
     this.loadPatients();
   }

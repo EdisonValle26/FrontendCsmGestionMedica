@@ -5,21 +5,27 @@
         <label class="text-sm text-gray-600">{{ field.label }}</label>
 
         <!-- TEXT -->
-        <input *ngIf="field.type === 'text'" [formControlName]="field.name" class="w-full border p-2 rounded" />
+        <input *ngIf="field.type === 'text'" [formControlName]="field.name" [placeholder]="field.placeholder || ''"
+            (input)="onInput($event, field)" [attr.maxLength]="field.maxLength || null"
+            class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
-        <textarea *ngIf="field.type === 'textarea'" [formControlName]="field.name" class="w-full border p-2 rounded">
+        <textarea *ngIf="field.type === 'textarea'" [formControlName]="field.name "
+            [placeholder]="field.placeholder || ''" (input)="onInput($event, field)"
+            [attr.maxLength]="field.maxLength || null"
+            class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
         </textarea>
 
         <!-- DATE -->
         <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name"
-            class="w-full border p-2 rounded" />
+            class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- TIME -->
         <input *ngIf="field.type === 'time'" type="time" [formControlName]="field.name"
-            class="w-full border p-2 rounded" />
+            class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- SELECT -->
-        <select *ngIf="field.type === 'select'" [formControlName]="field.name" class="w-full border p-2 rounded">
+        <select *ngIf="field.type === 'select'" [formControlName]="field.name"
+            class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
 
             <option *ngFor="let opt of field.options" [value]="opt.value">
                 {{ opt.label }}
@@ -28,14 +34,40 @@
         </select>
 
         <!-- ERROR -->
-        <div *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched" class="text-red-500 text-xs">
-            Campo requerido
+        <div *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched" class="text-red-500 text-xs mt-1">
+
+            <div *ngIf="form.get(field.name)?.errors?.['required']">
+                Campo requerido
+            </div>
+
+            <div *ngIf="form.get(field.name)?.errors?.['email']">
+                Correo inválido
+            </div>
+
+            <div *ngIf="form.get(field.name)?.errors?.['minlength']">
+                Mínimo
+                {{ field.minLength }}
+                caracteres
+            </div>
+
+            <div *ngIf="form.get(field.name)?.errors?.['maxlength']">
+                Máximo
+                {{ field.maxLength }}
+                caracteres
+            </div>
+
+            <div *ngIf="form.get(field.name)?.errors?.['pattern']">
+                Formato inválido
+            </div>
+
         </div>
 
     </div>
 
-    <app-button type="submit" variant="primary" customClass="w-full mt-4">
-        Guardar
-    </app-button>
+    <div class="flex justify-center pt-2">
+        <app-button type="submit" variant="primary" customClass="w-180 flex items-center justify-center">
+            Guardar
+        </app-button>
+    </div>
 
 </form>
