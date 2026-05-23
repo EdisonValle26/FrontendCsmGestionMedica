@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FilterField } from '../../core/interface/filter-field.interface';
 import { FormField } from '../../core/interface/form-field.interface';
@@ -19,6 +18,7 @@ export class PatientsComponent {
   selectedPatients: any = null;
   isModalOpen = false;
   loading = false;
+  isEdit: Boolean = true;
 
   columns: TableColumn[] = [
     { label: 'Identificación', field: 'identification' },
@@ -63,7 +63,6 @@ export class PatientsComponent {
   constructor(
     private servicePatients: PatientsService,
     private alertService: AlertService,
-    private datePipe: DatePipe
   ) { }
 
   ngOnInit() {
@@ -114,6 +113,7 @@ export class PatientsComponent {
   openCreate() {
     this.selectedPatients = null;
     this.isModalOpen = true;
+    this.isEdit = true;
   }
 
   onEdit(patient: any) {
@@ -121,6 +121,15 @@ export class PatientsComponent {
       ...patient
     };
     this.isModalOpen = true;
+    this.isEdit = true;
+  }
+
+  onView(patient: any) {
+    this.selectedPatients = {
+      ...patient
+    };
+    this.isModalOpen = true;
+    this.isEdit = false;
   }
 
   onSave(data: Patient) {

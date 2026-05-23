@@ -6,25 +6,25 @@
 
         <!-- TEXT -->
         <input *ngIf="field.type === 'text'" [formControlName]="field.name" [placeholder]="field.placeholder || ''"
-            (input)="onInput($event, field)" [attr.maxLength]="field.maxLength || null"
+            (input)="onInput($event, field)" [attr.maxLength]="field.maxLength || null" [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': !isEdit}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <textarea *ngIf="field.type === 'textarea'" [formControlName]="field.name "
             [placeholder]="field.placeholder || ''" (input)="onInput($event, field)"
-            [attr.maxLength]="field.maxLength || null"
+            [attr.maxLength]="field.maxLength || null" [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': !isEdit}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
         </textarea>
 
         <!-- DATE -->
-        <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name"
+        <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name" [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': !isEdit}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- TIME -->
-        <input *ngIf="field.type === 'time'" type="time" [formControlName]="field.name"
+        <input *ngIf="field.type === 'time'" type="time" [formControlName]="field.name" [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': !isEdit}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- SELECT -->
-        <select *ngIf="field.type === 'select'" [formControlName]="field.name"
+        <select *ngIf="field.type === 'select'" [formControlName]="field.name" [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': !isEdit}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
 
             <option *ngFor="let opt of field.options" [value]="opt.value">
@@ -64,7 +64,7 @@
 
     </div>
 
-    <div class="flex justify-center pt-2">
+    <div *ngIf="isEdit" class="flex justify-center pt-2">
         <app-button type="submit" variant="primary" customClass="w-180 flex items-center justify-center">
             Guardar
         </app-button>

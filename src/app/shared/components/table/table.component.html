@@ -45,6 +45,9 @@
                 </td>
                 <!-- ACTIONS -->
                 <td class="p-3 text-center space-x-3">
+                    <button (click)="view.emit(row)">
+                        <i class="fa-solid fa-eye" style="color: rgb(69, 192, 120)"></i>
+                    </button>
                     <button (click)="edit.emit(row)">
                         <i class="fa-solid fa-pen-to-square" style="color: rgb(19, 142, 241)"></i>
                     </button>

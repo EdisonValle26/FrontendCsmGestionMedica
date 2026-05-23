@@ -22,13 +22,14 @@
   [takeOptions]="takeOptions"
   (pageChange)="onPageChange($event)"
   (takeChange)="onTakeChange($event)"
+  (view)="onView($event)"
   (edit)="onEdit($event)"
   (delete)="onDelete($event)">
 </app-table>
 
 <!-- MODAL -->
 <app-modal-container
-  [title]="selectedPatients ? 'Editar Paciente' : 'Nuevo Paciente'"
+  [title]="isEdit ? (selectedPatients ? 'Editar Paciente' : 'Nuevo Paciente') : 'Ver Paciente'"
   [open]="isModalOpen"
   (close)="isModalOpen = false">
 
@@ -36,7 +37,8 @@
   *ngIf="isModalOpen"
   [fields]="formFields"
   [data]="selectedPatients"
-  (submitForm)="onSave($event)">
+  (submitForm)="onSave($event)"
+  [isEdit]="isEdit">
 </app-form>
 
 </app-modal-container>

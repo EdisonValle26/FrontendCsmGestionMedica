@@ -12,6 +12,7 @@ export class FormComponent implements OnChanges {
 
   @Input() fields: FormField[] = [];
   @Input() data: any = null;
+  @Input() isEdit: Boolean = true;
 
   @Output() submitForm = new EventEmitter<any>();
 
@@ -21,6 +22,9 @@ export class FormComponent implements OnChanges {
 
   ngOnInit() {
     this.buildForm();
+    if(!this.isEdit){
+      this.form.disable();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {

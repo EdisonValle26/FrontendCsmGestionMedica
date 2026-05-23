@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -83,8 +82,7 @@ import { TopbarComponent } from './shared/components/topbar/topbar.component';
   providers: [
     provideHttpClient(
       withInterceptors([authInterceptor])
-    ),
-    DatePipe
+    )
   ],
   bootstrap: [AppComponent]
 })

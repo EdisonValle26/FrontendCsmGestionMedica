@@ -21,6 +21,7 @@ export class TableComponent {
 
   @Output() pageChange = new EventEmitter<number>();
   @Output() takeChange = new EventEmitter<number>();
+  @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<number>();
 
