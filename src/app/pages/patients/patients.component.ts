@@ -4,6 +4,7 @@ import { FormField } from '../../core/interface/form-field.interface';
 import { Patient } from '../../core/interface/patient.interface';
 import { TableColumn } from '../../core/interface/table-column.interface';
 import { AlertService } from '../../core/services/alert.service';
+import { CatalogsService } from '../../core/services/catalogs.service';
 import { PatientsService } from '../../core/services/patients.service';
 
 @Component({
@@ -36,6 +37,9 @@ export class PatientsComponent {
     { name: 'email', label: 'Correo', type: 'text', inputType: 'email', required: true },
     { name: 'address', label: 'Dirección', type: 'text', inputType: 'alphanumeric', required: true },
     { name: 'birth_date', label: 'Fecha de Nacimiento', type: 'date', required: true },
+    { name: 'gender_id', label: 'Género', type: 'select', required: true, options: [] },
+    { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [] },
+    { name: 'nationality_id', label: 'Nacionalidad', type: 'select', required: true, options: [] },
   ];
 
   filtersConfig: FilterField[] = [
@@ -63,10 +67,12 @@ export class PatientsComponent {
   constructor(
     private servicePatients: PatientsService,
     private alertService: AlertService,
+    private catalogsService: CatalogsService
   ) { }
 
   ngOnInit() {
     this.loadPatients();
+    this.loadCatalogs();
   }
 
   loadPatients() {
@@ -89,12 +95,15 @@ export class PatientsComponent {
             return {
               id: item.id,
               identification: item.persons?.identification || '',
+              document_type_id: item.persons?.document_type_id || null,
               first_name: item.persons?.first_name || '',
               last_name: item.persons?.last_name || '',
               patient: `${item.persons?.first_name || ''} ${item.persons?.last_name || ''}`,
               phone: item.persons?.phone || '',
               email: item.persons?.email || '',
               address: item.persons?.address || '',
+              gender_id: item.persons?.gender_id || null,
+              nationality_id: item.persons?.nationality_id || null,
               birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : ''
             };
           });
@@ -136,12 +145,12 @@ export class PatientsComponent {
 
     const payload = {
       identification: data.identification,
-      document_type_id: 1,
+      document_type_id: Number(data.document_type_id),
       first_name: data.first_name,
       last_name: data.last_name,
       birth_date: data.birth_date,
-      gender_id: 1,
-      nationality_id: 1,
+      gender_id: Number(data.gender_id),
+      nationality_id: Number(data.nationality_id),
       phone: data.phone,
       email: data.email,
       address: data.address,
@@ -240,6 +249,57 @@ export class PatientsComponent {
           );
         }
       });
+  }
+
+  loadCatalogs() {
+
+    // DOCUMENT TYPE
+    this.catalogsService.getByType('DOCUMENT_TYPE').subscribe({
+      next: (res) => {
+
+        const field = this.formFields.find(
+          f => f.name === 'document_type_id'
+        );
+
+        if (field) {
+          field.options = res.map((item: any) => (
+            { label: item.value, value: item.id }
+          ));
+        }
+      }
+    });
+
+    // GENDER
+    this.catalogsService.getByType('GENDER').subscribe({
+      next: (res) => {
+
+        const field = this.formFields.find(
+          f => f.name === 'gender_id'
+        );
+
+        if (field) {
+          field.options = res.map((item: any) => (
+            { label: item.value, value: item.id }
+          ));
+        }
+      }
+    });
+
+    // NATIONALITY
+    this.catalogsService.getByType('NATIONALITY').subscribe({
+      next: (res) => {
+
+        const field = this.formFields.find(
+          f => f.name === 'nationality_id'
+        );
+
+        if (field) {
+          field.options = res.map((item: any) => (
+            { label: item.value, value: item.id }
+          ));
+        }
+      }
+    });
   }
 
 }
