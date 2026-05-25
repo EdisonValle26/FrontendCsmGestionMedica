@@ -1,10 +1,17 @@
-export type AppointmentStatus = 'confirmada' | 'pendiente' | 'urgente';
 export interface Appointment {
-    id?: number;
-    date?: string;
-    time: string;
-    patient: string;
-    doctor: string;
-    specialty: string;
-    status: AppointmentStatus;
+    id?: number,
+    patient_id: number,
+    doctor_id: number,
+    specialty_id: number,
+    appointment_date: string,
+    appointment_time: string,
+    duration_minutes: number,
+    appointment_type_id: number,
+    appointment_status_id: number,
+    reason: string,
+    notes: string,
+    patient?: string,
+    doctor?: string,
+    specialty_name?: string,
+    status_name?: string | null | undefined,
 }

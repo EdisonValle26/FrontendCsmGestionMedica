@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
 export class StatCardComponent {
 
   @Input() title!: string;
-  @Input() value!: string;
+  @Input() value!: number;
   @Input() icon!: string;
   @Input() color: 'blue' | 'green' | 'purple' | 'red' = 'blue';
 

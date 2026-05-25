@@ -1,4 +1,4 @@
-<div class="p-6 space-y-6">
+<div class="h-full min-h-0 flex flex-col p-2 gap-2 overflow-hidden">
 
     <!-- BIENVENIDA -->
     <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
@@ -9,19 +9,22 @@
     <!-- STATS -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <app-stat-card title="Citas Hoy" value="12" icon="fa-calendar-check" color="blue"></app-stat-card>
+        <app-stat-card title="Citas Hoy" [value]="totalAppointmentsToday" icon="fa-calendar-check" color="blue">
+        </app-stat-card>
 
-        <app-stat-card title="Pacientes" value="85" icon="fa-users" color="green"></app-stat-card>
+        <app-stat-card title="Pacientes" [value]="totalPatients" icon="fa-users" color="green">
+        </app-stat-card>
 
-        <app-stat-card title="Doctores" value="10" icon="fa-user-md" color="purple"></app-stat-card>
+        <app-stat-card title="Doctores" [value]="totalDoctors" icon="fa-user-md" color="purple">
+        </app-stat-card>
 
     </div>
 
     <!-- AGENDA + ACCIONES -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
 
         <!-- AGENDA DEL DIA -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 min-h-0">
             <app-day-agenda [appointments]="appointments"></app-day-agenda>
         </div>
 

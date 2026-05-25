@@ -3,5 +3,7 @@ export const API_ROUTES = {
     CHATBOT: '/chatbot/message',
     APPOINTMENTS: '/appointments',
     PATIENTS: '/patients',
-    CATALOGS: '/catalogs'
+    CATALOGS: '/catalogs',
+    DOCTORS: '/doctors',
+    SPECIALTIES: '/specialties'
 };

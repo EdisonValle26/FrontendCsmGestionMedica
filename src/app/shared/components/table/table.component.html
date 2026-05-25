@@ -36,9 +36,11 @@
                     </ng-container>
                     <!-- BADGE -->
                     <span *ngIf="col.type === 'badge'" class="px-2 py-1 text-xs rounded-full" [ngClass]="{
-                            'bg-yellow-100 text-yellow-600': row[col.field] === 'pendiente',
-                            'bg-green-100 text-green-600': row[col.field] === 'confirmada',
-                            'bg-red-100 text-red-600': row[col.field] === 'urgente'
+                            'bg-yellow-100 text-yellow-600': row[col.field] === 'Pendiente',
+                            'bg-green-100 text-green-600': row[col.field] === 'Confirmada',
+                            'bg-red-100 text-red-600': row[col.field] === 'Cancelada',
+                            'bg-blue-100 text-blue-600': row[col.field] === 'Completada',
+                            'bg-gray-100 text-gray-600': row[col.field] === 'No asistió',
                         }">
                         {{ row[col.field] }}
                     </span>

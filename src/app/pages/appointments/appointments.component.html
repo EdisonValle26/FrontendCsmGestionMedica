@@ -15,21 +15,40 @@
 <app-table
   [data]="appointments"
   [columns]="columns"
+  [loading]="loading"
+  [total]="totalAppointments"
+  [page]="page"
+  [take]="take"
+  [takeOptions]="takeOptions"
+  (pageChange)="onPageChange($event)"
+  (takeChange)="onTakeChange($event)"
+  (view)="onView($event)"
   (edit)="onEdit($event)"
   (delete)="onDelete($event)">
 </app-table>
 
 <!-- MODAL -->
 <app-modal-container
-  [title]="selectedAppointment ? 'Editar Cita' : 'Nueva Cita'"
+  [title]="isEdit ? (selectedAppointments ? 'Editar Cita' : 'Nuevo Cita') : 'Ver Cita'"
   [open]="isModalOpen"
   (close)="isModalOpen = false">
 
 <app-form
   *ngIf="isModalOpen"
   [fields]="formFields"
-  [data]="selectedAppointment"
-  (submitForm)="onSave($event)">
+  [data]="selectedAppointments"
+  (submitForm)="onSave($event)"
+  [isEdit]="isEdit">
 </app-form>
 
 </app-modal-container>
+
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  title="Eliminar Cita"
+  message="¿Está seguro de eliminar esta Cita?"
+  type="warning"
+  (close)="showDeleteModal = false"
+  (confirm)="confirmDelete()">
+</app-alert-modal>

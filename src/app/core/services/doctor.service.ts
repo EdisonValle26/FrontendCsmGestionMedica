@@ -4,10 +4,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ROUTES } from '../config/api-routes';
 import { environment } from '../config/environment';
-import { Appointment } from '../interface/appointment.interface';
 
-@Injectable({ providedIn: 'root' })
-export class AppointmentsService {
+@Injectable({
+    providedIn: 'root'
+})
+export class DoctorService {
 
     private apiUrl = environment.apiUrl;
 
@@ -29,43 +30,39 @@ export class AppointmentsService {
             params = params.set('field', filters.field);
         }
 
-        if (filters?.date) {
-            params = params.set('date', filters.date);
-        }
-
         if (filters?.value_field) {
             params = params.set('value_field', filters.value_field);
         }
 
         return this.http.get<any>(
-            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}`,
+            `${this.apiUrl}${API_ROUTES.DOCTORS}`,
             { params }
         );
     }
 
     getById(id: number): Observable<any> {
         return this.http.get<any>(
-            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}/${id}`
+            `${this.apiUrl}${API_ROUTES.DOCTORS}/${id}`
         );
     }
 
-    create(payload: Appointment): Observable<any> {
-        return this.http.post<any>(
-            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}`,
-            payload
-        );
-    }
+    // create(payload: Patient): Observable<any> {
+    //     return this.http.post<any>(
+    //         `${this.apiUrl}${API_ROUTES.DOCTORS}`,
+    //         payload
+    //     );
+    // }
 
-    update(id: number, payload: Appointment): Observable<any> {
-        return this.http.put<any>(
-            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}/${id}`,
-            payload
-        );
-    }
+    // update(id: number, payload: Patient): Observable<any> {
+    //     return this.http.put<any>(
+    //         `${this.apiUrl}${API_ROUTES.DOCTORS}/${id}`,
+    //         payload
+    //     );
+    // }
 
     delete(id: number): Observable<any> {
         return this.http.delete<any>(
-            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}/${id}`
+            `${this.apiUrl}${API_ROUTES.DOCTORS}/${id}`
         );
     }
 
