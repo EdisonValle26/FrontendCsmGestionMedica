@@ -1,9 +1,16 @@
 export const API_ROUTES = {
     LOGIN: '/auth/login',
     CHATBOT: '/chatbot/message',
+    DASHBOARD: '/dashboard',
     APPOINTMENTS: '/appointments',
     PATIENTS: '/patients',
     CATALOGS: '/catalogs',
     DOCTORS: '/doctors',
-    SPECIALTIES: '/specialties'
+    SPECIALTIES: '/specialties',
+    CALENDAR: '/appointments_calendar',
+    DOCTOR_SCHEDULES: '/doctor_schedules',
+    MEDICAL_RECIRDS: '/medical_records',
+    USERS: '/users',
+    ROLES: '/roles',
+    OPTIONS: '/options',
 };

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { API_ROUTES } from '../../core/config/api-routes';
 import { AlertService } from '../../core/services/alert.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -28,33 +29,6 @@ export class LoginComponent {
     private alert: AlertService
   ) { }
 
-  // onLogin() {
-  //   const success = this.auth.login(this.email, this.password);
-
-  //   if (success) {
-  //     this.router.navigate(['/dashboard']);
-  //   } else {
-  //     this.alertMessage = 'Credenciales incorrectas';
-  //     this.alertType = 'error';
-  //     this.showAlert = true;
-
-  //     setTimeout(() => {
-  //       this.showAlert = false;
-  //     }, 3000);
-  //   }
-  // }
-
-  //Alerta Modal
-  // onLogin() {
-  //   const success = this.auth.login(this.email, this.password);
-
-  //   if (success) {
-  //     this.router.navigate(['/dashboard']);
-  //   } else {
-  //     this.showModal = true;
-  //   }
-  // }
-
   onConfirm() {
     this.showModal = false;
   }
@@ -66,9 +40,9 @@ export class LoginComponent {
 
         next: () => {
 
-          this.alert.success('Bienvenido 👨‍⚕️');
+          this.alert.success('Bienvenido');
 
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([API_ROUTES.DASHBOARD]);
 
         },
 

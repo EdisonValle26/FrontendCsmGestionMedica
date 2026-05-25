@@ -1,1 +1,51 @@
-<p>doctors works!</p>
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Gestión de Doctores</h1>
+    <app-button variant="primary">
+        Nuevo Doctor
+    </app-button>
+</div>
+
+<!-- FILTROS -->
+<app-filters
+  [filters]="filtersConfig"
+  (filterChange)="onFilter($event)">
+</app-filters>
+
+<!-- TABLA -->
+<app-table
+  [data]="doctors"
+  [columns]="columns"
+  [loading]="loading"
+  [total]="totalDoctors"
+  [page]="page"
+  [take]="take"
+  [takeOptions]="takeOptions"
+  (pageChange)="onPageChange($event)"
+  (takeChange)="onTakeChange($event)"
+  (view)="onView($event)"
+  (delete)="onDelete($event)">
+</app-table>
+
+<!-- MODAL -->
+<app-modal-container
+  [title]="isEdit ? (selectedDoctors ? 'Editar Doctor' : 'Nuevo Doctor') : 'Ver Doctor'"
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedDoctors"
+  [isEdit]="isEdit">
+</app-form>
+
+</app-modal-container>
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  title="Eliminar doctor"
+  message="¿Está seguro de eliminar este doctor?"
+  type="warning"
+  (close)="showDeleteModal = false"
+  (confirm)="confirmDelete()">
+</app-alert-modal>
