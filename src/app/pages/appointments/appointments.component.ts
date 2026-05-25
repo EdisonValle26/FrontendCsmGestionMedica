@@ -22,7 +22,7 @@ export class AppointmentsComponent {
   selectedAppointments: Appointment | null = null;
   isModalOpen = false;
   loading = false;
-  isEdit: Boolean = true;
+  mode: 'create' | 'edit' | 'view' = 'create';
 
   columns: TableColumn[] = [
     { label: 'Fecha', field: 'appointment_date' },
@@ -135,7 +135,7 @@ export class AppointmentsComponent {
   openCreate() {
     this.selectedAppointments = null;
     this.isModalOpen = true;
-    this.isEdit = true;
+    this.mode = 'create';
   }
 
   onEdit(appointment: any) {
@@ -143,7 +143,7 @@ export class AppointmentsComponent {
       ...appointment
     };
     this.isModalOpen = true;
-    this.isEdit = true;
+    this.mode = 'edit';
   }
 
   onView(appointment: any) {
@@ -151,7 +151,7 @@ export class AppointmentsComponent {
       ...appointment
     };
     this.isModalOpen = true;
-    this.isEdit = false;
+    this.mode = 'view';
   }
 
   onSave(data: Appointment) {
@@ -339,7 +339,7 @@ export class AppointmentsComponent {
           );
 
           if (field) {
-            field.options = res.map((item: any) => (
+            field.options = res.data.map((item: any) => (
               { label: `${item.persons?.identification || ''} - ${item.persons?.first_name || ''} ${item.persons?.last_name || ''}`, value: item.id }
             ));
           }

@@ -12,17 +12,18 @@ export class FormComponent implements OnChanges {
 
   @Input() fields: FormField[] = [];
   @Input() data: any = null;
-  @Input() isEdit: Boolean = true;
+  @Input() mode: 'create' | 'edit' | 'view' = 'create';
 
   @Output() submitForm = new EventEmitter<any>();
 
   form!: FormGroup;
-
+  showPassword = false;
+  
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.buildForm();
-    if(!this.isEdit){
+    if (this.mode === 'view') {
       this.form.disable();
     }
   }
@@ -31,6 +32,9 @@ export class FormComponent implements OnChanges {
     if (changes['data']) {
       this.form?.reset();
       this.buildForm();
+      if (this.mode === 'view') {
+        this.form.disable();
+      }
     }
   }
 

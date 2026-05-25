@@ -19,7 +19,7 @@ export class DoctorsComponent {
   selectedDoctors: any = null;
   isModalOpen = false;
   loading = false;
-  isEdit: Boolean = true;
+  mode: 'create' | 'edit' | 'view' = 'create';
 
   columns: TableColumn[] = [
     { label: 'Identificación', field: 'identification' },
@@ -124,7 +124,7 @@ export class DoctorsComponent {
   // openCreate() {
   //   this.selectedDoctors = null;
   //   this.isModalOpen = true;
-  //   this.isEdit = true;
+  //   this.mode = 'create';
   // }
 
   // onEdit(doctor: any) {
@@ -132,7 +132,7 @@ export class DoctorsComponent {
   //     ...doctor
   //   };
   //   this.isModalOpen = true;
-  //   this.isEdit = true;
+  //   this.mode = 'edit';
   // }
 
   onView(doctor: any) {
@@ -140,7 +140,7 @@ export class DoctorsComponent {
       ...doctor
     };
     this.isModalOpen = true;
-    this.isEdit = false;
+    this.mode = 'view';
   }
 
   // onSave(data: Doctor) {

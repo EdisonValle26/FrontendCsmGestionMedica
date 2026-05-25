@@ -28,7 +28,7 @@
 
 <!-- MODAL -->
 <app-modal-container
-  [title]="isEdit ? (selectedDoctors ? 'Editar Doctor' : 'Nuevo Doctor') : 'Ver Doctor'"
+  [title]=" mode === 'create' ? 'Nuevo Doctor' : mode === 'edit' ? 'Editar Doctor'  : 'Ver Doctor' "
   [open]="isModalOpen"
   (close)="isModalOpen = false">
 
@@ -36,7 +36,7 @@
   *ngIf="isModalOpen"
   [fields]="formFields"
   [data]="selectedDoctors"
-  [isEdit]="isEdit">
+  [mode]="mode">
 </app-form>
 
 </app-modal-container>

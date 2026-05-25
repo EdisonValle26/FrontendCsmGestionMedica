@@ -5,6 +5,7 @@ export interface FormField {
 
     type:
     | 'text'
+    | 'password'
     | 'textarea'
     | 'date'
     | 'time'

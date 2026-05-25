@@ -1,1 +1,53 @@
-<p>users works!</p>
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Gestión de Usuarios</h1>
+    <app-button variant="primary" (click)="openCreate()">
+        Nuevo Usuario
+    </app-button>
+</div>
+
+<!-- FILTROS -->
+<app-filters
+  [filters]="filtersConfig"
+  (filterChange)="onFilter($event)">
+</app-filters>
+
+<!-- TABLA -->
+<app-table
+  [data]="users"
+  [columns]="columns"
+  [loading]="loading"
+  [total]="totalUsers"
+  [page]="page"
+  [take]="take"
+  [takeOptions]="takeOptions"
+  (pageChange)="onPageChange($event)"
+  (takeChange)="onTakeChange($event)"
+  (view)="onView($event)"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)">
+</app-table>
+
+<!-- MODAL -->
+<app-modal-container
+  [title]=" mode === 'create' ? 'Nuevo Usuario' : mode === 'edit' ? 'Editar Usuario'  : 'Ver Usuario' "
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedUsers"
+  (submitForm)="onSave($event)"
+  [mode]="mode">
+</app-form>
+
+</app-modal-container>
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  title="Eliminar usuario"
+  message="¿Está seguro de eliminar este usuario?"
+  type="warning"
+  (close)="showDeleteModal = false"
+  (confirm)="confirmDelete()">
+</app-alert-modal>

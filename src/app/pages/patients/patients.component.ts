@@ -19,7 +19,7 @@ export class PatientsComponent {
   selectedPatients: any = null;
   isModalOpen = false;
   loading = false;
-  isEdit: Boolean = true;
+  mode: 'create' | 'edit' | 'view' = 'create';
 
   columns: TableColumn[] = [
     { label: 'Identificación', field: 'identification' },
@@ -122,7 +122,7 @@ export class PatientsComponent {
   openCreate() {
     this.selectedPatients = null;
     this.isModalOpen = true;
-    this.isEdit = true;
+    this.mode = 'create';
   }
 
   onEdit(patient: any) {
@@ -130,7 +130,7 @@ export class PatientsComponent {
       ...patient
     };
     this.isModalOpen = true;
-    this.isEdit = true;
+    this.mode = 'edit';
   }
 
   onView(patient: any) {
@@ -138,7 +138,7 @@ export class PatientsComponent {
       ...patient
     };
     this.isModalOpen = true;
-    this.isEdit = false;
+    this.mode = 'view';
   }
 
   onSave(data: Patient) {

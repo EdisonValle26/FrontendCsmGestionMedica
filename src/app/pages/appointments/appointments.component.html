@@ -29,7 +29,7 @@
 
 <!-- MODAL -->
 <app-modal-container
-  [title]="isEdit ? (selectedAppointments ? 'Editar Cita' : 'Nuevo Cita') : 'Ver Cita'"
+  [title]=" mode === 'create' ? 'Nueva Cita' : mode === 'edit' ? 'Editar Cita'  : 'Ver Cita' "
   [open]="isModalOpen"
   (close)="isModalOpen = false">
 
@@ -38,7 +38,7 @@
   [fields]="formFields"
   [data]="selectedAppointments"
   (submitForm)="onSave($event)"
-  [isEdit]="isEdit">
+  [mode]="mode">
 </app-form>
 
 </app-modal-container>
