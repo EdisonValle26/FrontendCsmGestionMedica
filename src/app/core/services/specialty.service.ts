@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ROUTES } from '../config/api-routes';
 import { environment } from '../config/environment';
+import { Specialities } from '../interface/specialties.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -46,19 +47,19 @@ export class SpecialtyService {
         );
     }
 
-    // create(payload: Patient): Observable<any> {
-    //     return this.http.post<any>(
-    //         `${this.apiUrl}${API_ROUTES.SPECIALTIES}`,
-    //         payload
-    //     );
-    // }
+    create(payload: Specialities): Observable<any> {
+        return this.http.post<any>(
+            `${this.apiUrl}${API_ROUTES.SPECIALTIES}`,
+            payload
+        );
+    }
 
-    // update(id: number, payload: Patient): Observable<any> {
-    //     return this.http.put<any>(
-    //         `${this.apiUrl}${API_ROUTES.SPECIALTIES}/${id}`,
-    //         payload
-    //     );
-    // }
+    update(id: number, payload: Specialities): Observable<any> {
+        return this.http.put<any>(
+            `${this.apiUrl}${API_ROUTES.SPECIALTIES}/${id}`,
+            payload
+        );
+    }
 
     delete(id: number): Observable<any> {
         return this.http.delete<any>(

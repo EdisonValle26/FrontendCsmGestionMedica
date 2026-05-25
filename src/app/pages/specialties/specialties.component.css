@@ -1,0 +1,86 @@
+/* Animación sutil para las cards */
+.specialty-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #f0f0f0;
+}
+
+.specialty-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ELIMINA o COMENTA esta regla - está causando el problema */
+/* .specialty-card .w-20.h-20 {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+} */
+
+/* Reemplázala con esta versión más suave */
+.specialty-card .w-20.h-20 {
+    transition: all 0.3s ease;
+}
+
+.specialty-card:hover .w-20.h-20 {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los iconos */
+.specialty-card i {
+    transition: transform 0.2s ease-in-out;
+}
+
+.specialty-card:hover i:not(.fa-pencil-alt) {
+    transform: scale(1.1);
+}
+
+/* Botón de editar */
+.specialty-card button.absolute {
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.specialty-card:hover button.absolute {
+    opacity: 1;
+}
+
+.specialty-card button.absolute:hover {
+    background-color: #eff6ff;
+}
+
+/* Badge de estado */
+.specialty-card span.rounded-full {
+    font-weight: 500;
+    letter-spacing: 0.025em;
+}
+
+/* Título de la especialidad */
+.specialty-card h2 {
+    letter-spacing: -0.01em;
+}
+
+/* Descripción */
+.specialty-card p {
+    line-height: 1.5;
+}
+
+/* Efecto de sombra al hacer hover en la card */
+.specialty-card {
+    position: relative;
+}
+
+.specialty-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.75rem;
+    pointer-events: none;
+    transition: box-shadow 0.3s ease;
+}
+
+.specialty-card:hover::after {
+    box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.1);
+}

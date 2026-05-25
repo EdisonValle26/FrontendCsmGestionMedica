@@ -1,1 +1,91 @@
-<p>specialties works!</p>
+<div class="h-full min-h-0 flex flex-col p-2 gap-2 overflow-hidden">
+
+    <!-- Título -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Especialidades Médicas</h1>
+        <app-button variant="primary" (click)="openCreate()">
+            Nueva Especialidad
+        </app-button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+
+    <div *ngIf="!loading" class="flex-1 min-h-0 overflow-y-auto">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-1">
+
+            <div *ngFor="let specialty of specialties"
+                class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 specialty-card relative">
+
+                <button (click)="onEdit(specialty)"
+                    class="absolute top-3 right-3 text-gray-400 hover:text-blue-500 transition-colors duration-200 z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+                    title="Editar especialidad">
+                    <i class="fas fa-pencil-alt text-sm"></i>
+                </button>
+                <button (click)="onDelete(specialty)"
+                    class="absolute top-3 left-3 text-gray-400 hover:text-red-500 transition-colors duration-200 z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+                    [title]="specialty.status === 'Activo' ? 'Eliminar especialidad' : 'Reactivar especialidad'">
+                    <i [class]="specialty.status === 'Activo' ? 'fas fa-trash-can text-sm' : 'fas fa-undo-alt text-sm'"></i>
+                </button>
+
+                <div class="p-6">
+                    <div class="flex justify-center mb-4">
+                        <div [class]="'w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center shadow-sm'">
+                            <i [class]="specialty.icon!" [ngClass]="specialty.color" class="text-4xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-2">
+                            {{ specialty.name }}
+                        </h2>
+                        <span
+                            [class]="'px-3 py-1 text-xs font-medium rounded-full inline-block ' + specialty.statusClass">
+                            {{ specialty.status }}
+                        </span>
+                    </div>
+
+                    <p class="text-gray-600 text-sm leading-relaxed text-center">
+                        {{ specialty.description }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div *ngIf="!loading && specialties.length === 0" class="flex-1 flex items-center justify-center text-gray-500">
+        No hay especialidades disponibles
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<app-modal-container
+  [title]=" mode === 'create' ? 'Nueva Especialidad' : mode === 'edit' ? 'Editar Especialidad'  : 'Ver Especialidad' "
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedSpecialty"
+  (submitForm)="onSave($event)"
+  [mode]="mode">
+</app-form>
+
+</app-modal-container>
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  [title]="getModalTitle()"
+  [message]="getModalMessage()"
+  [type]="specialtyIdToDelete?.status === 'Activo' ? 'warning' : 'info'"
+  (close)="showDeleteModal = false; specialtyIdToDelete = null"
+  (confirm)="confirmAction()">
+</app-alert-modal>
