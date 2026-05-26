@@ -1,0 +1,33 @@
+.catalog-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #f0f0f0;
+}
+
+.catalog-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Scroll personalizado para la lista de items */
+.max-h-80::-webkit-scrollbar {
+    width: 4px;
+}
+
+.max-h-80::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.max-h-80::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.max-h-80::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Animación para los botones */
+.catalog-card button {
+    transition: all 0.2s ease;
+}

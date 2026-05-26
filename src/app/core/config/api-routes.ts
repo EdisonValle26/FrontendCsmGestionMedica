@@ -4,6 +4,7 @@ export const API_ROUTES = {
     DASHBOARD: '/dashboard',
     APPOINTMENTS: '/appointments',
     PATIENTS: '/patients',
+    CATALOGS_TYPE: '/catalog-types',
     CATALOGS: '/catalogs',
     DOCTORS: '/doctors',
     SPECIALTIES: '/specialties',
