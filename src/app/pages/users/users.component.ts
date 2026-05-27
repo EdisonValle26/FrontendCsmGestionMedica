@@ -5,7 +5,7 @@ import { TableColumn } from '../../core/interface/table-column.interface';
 import { User } from '../../core/interface/user.interface';
 import { AlertService } from '../../core/services/alert.service';
 import { CatalogsService } from '../../core/services/catalogs.service';
-import { RolService } from '../../core/services/rol.service';
+import { RoleService } from '../../core/services/role.service';
 import { UsersService } from '../../core/services/users.service';
 
 @Component({
@@ -116,7 +116,7 @@ export class UsersComponent {
     private serviceUsers: UsersService,
     private alertService: AlertService,
     private catalogsService: CatalogsService,
-    private rolService: RolService,
+    private roleService: RoleService,
   ) { }
 
   ngOnInit() {
@@ -381,7 +381,7 @@ export class UsersComponent {
       status: 'A',
     };
 
-    this.rolService.getAll(filter)
+    this.roleService.getAll(filter)
       .subscribe({
 
         next: (res) => {

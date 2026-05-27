@@ -13,5 +13,6 @@ export const API_ROUTES = {
     MEDICAL_RECIRDS: '/medical_records',
     USERS: '/users',
     ROLES: '/roles',
+    PERMISSIONS: '/role-option-permissions',
     OPTIONS: '/options',
 };

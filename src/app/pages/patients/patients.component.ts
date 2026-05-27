@@ -225,6 +225,7 @@ export class PatientsComponent {
     this.loadPatients();
 
   }
+  
   confirmDelete() {
 
     if (!this.patientIdToDelete) {

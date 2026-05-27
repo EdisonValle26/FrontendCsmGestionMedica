@@ -1,1 +1,142 @@
-<p>roles works!</p>
+<div class="h-full min-h-0 flex flex-col p-2 gap-4 overflow-hidden bg-gray-50">
+
+    <div class="flex justify-between items-center shrink-0">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Roles del Sistema</h1>
+            <p class="text-sm text-gray-500 mt-1">Perfiles de acceso configurados</p>
+        </div>
+        <app-button variant="primary" (click)="openCreate()">
+            Nuevo Rol
+        </app-button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+
+    <div *ngIf="!loading" class="flex-1 min-h-0 flex gap-6 overflow-hidden">
+
+        <!-- Lista de Roles -->
+        <div class="w-80 flex-shrink-0 overflow-y-auto space-y-3 p-2">
+            <div *ngFor="let role of roles"
+                class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 cursor-pointer"
+                [class.ring-2]="selectedRoleForPermissions?.id === role.id"
+                [class.ring-blue-500]="selectedRoleForPermissions?.id === role.id"
+                (click)="selectRoleForPermissions(role)">
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                <h3 class="font-semibold text-gray-800">{{ role.name }}</h3>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ role.description }}</p>
+                        </div>
+                        <div class="flex gap-1 ml-2">
+                            <button (click)="onEdit(role)"
+                                class="text-gray-400 hover:text-blue-500 transition p-1">
+                                <i class="fas fa-pencil-alt text-xs"></i>
+                            </button>
+                            <button (click)="onDelete(role.id)"
+                                class="text-gray-400 hover:text-red-500 transition p-1">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-gray-100">
+                        <div class="flex items-center gap-2 text-xs">
+                            <i class="fas fa-shield-alt text-gray-400"></i>
+                            <span class="text-gray-500">{{ moduleAccessCountMap[role.id] }} módulos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matriz de Permisos -->
+        <div class="flex-1 min-h-0 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Header de la tabla -->
+            <div class="shrink-0 p-4 border-b border-gray-200 bg-gray-50">
+                <h2 class="text-lg font-semibold text-gray-800">Matriz de Permisos</h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    Acceso por módulo y rol
+                    <span *ngIf="selectedRoleForPermissions" class="text-blue-600 font-medium">
+                        - Editando permisos para: {{ selectedRoleForPermissions.name }}
+                    </span>
+                </p>
+            </div>
+            <!-- Tabla de permisos -->
+            <div class="flex-1 overflow-auto relative">
+                <table class="min-w-full border-collapse">
+                    <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b w-48">
+                                MÓDULO
+                            </th>
+                            <th *ngFor="let permission of permissionColumns"
+                                class="px-4 py-3 text-center text-xs font-semibold text-gray-600 border-b w-24">
+                                {{ permission.label }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let module of permissionMatrix"
+                            class="hover:bg-gray-50 transition border-b border-gray-100">
+                            <td class="px-4 py-3 text-sm text-gray-700">
+                                <div class="flex items-center gap-2">
+                                    <i [class]="'fas fa-' + module.icon + ' text-gray-400 w-5'"></i>
+                                    <span>{{ module.moduleName }}</span>
+                                </div>
+                            </td>
+                            <!-- Permisos dinámicos -->
+                            <td *ngFor="let permission of permissionColumns" class="px-4 py-3 text-center">
+                                <div class="flex justify-center">
+                                    <button (click)="togglePermissionForSelectedRole(module, permission.key)"
+                                        [disabled]="!selectedRoleForPermissions" class="toggle-switch"
+                                        [class.toggle-active]="module.permissions[selectedRoleForPermissions!.id]?.[permission.key]"
+                                        [class.toggle-inactive]="!module.permissions[selectedRoleForPermissions!.id]?.[permission.key]"
+                                        [class.opacity-50]="!selectedRoleForPermissions">
+                                        <span class="toggle-slider"></span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="shrink-0 p-3 border-t border-gray-200 bg-gray-50 text-center">
+                <p class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Selecciona un rol de la izquierda para editar sus permisos
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL -->
+<app-modal-container
+  [title]=" mode === 'create' ? 'Nuevo Rol' : 'Editar Rol'"
+  [open]="isModalOpen"
+  (close)="isModalOpen = false">
+
+<app-form
+  *ngIf="isModalOpen"
+  [fields]="formFields"
+  [data]="selectedRole"
+  (submitForm)="onSave($event)"
+  [mode]="mode">
+</app-form>
+
+</app-modal-container>
+
+<app-alert-modal
+  [isOpen]="showDeleteModal"
+  title="Eliminar Rol"
+  message="¿Está seguro de eliminar este Rol?"
+  type="warning"
+  (close)="showDeleteModal = false"
+  (confirm)="confirmDelete()">
+</app-alert-modal>

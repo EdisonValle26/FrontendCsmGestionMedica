@@ -7,13 +7,11 @@ import { environment } from '../config/environment';
 @Injectable({
     providedIn: 'root'
 })
-export class RolService {
+export class RoleService {
 
     private apiUrl = environment.apiUrl;
 
-    constructor(
-        private http: HttpClient
-    ) { }
+    constructor(private http: HttpClient) { }
 
     getAll(filters?: any): Observable<any> {
 
@@ -45,24 +43,23 @@ export class RolService {
         );
     }
 
-    // create(payload: Patient): Observable<any> {
-    //     return this.http.post<any>(
-    //         `${this.apiUrl}${API_ROUTES.ROLES}`,
-    //         payload
-    //     );
-    // }
+    create(payload: any): Observable<any> {
+        return this.http.post<any>(
+            `${this.apiUrl}${API_ROUTES.ROLES}`,
+            payload
+        );
+    }
 
-    // update(id: number, payload: Patient): Observable<any> {
-    //     return this.http.put<any>(
-    //         `${this.apiUrl}${API_ROUTES.ROLES}/${id}`,
-    //         payload
-    //     );
-    // }
+    update(id: number, payload: any): Observable<any> {
+        return this.http.put<any>(
+            `${this.apiUrl}${API_ROUTES.ROLES}/${id}`,
+            payload
+        );
+    }
 
     delete(id: number): Observable<any> {
         return this.http.delete<any>(
             `${this.apiUrl}${API_ROUTES.ROLES}/${id}`
         );
     }
-
 }
