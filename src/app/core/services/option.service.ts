@@ -1,27 +1,19 @@
-
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ROUTES } from '../config/api-routes';
 import { environment } from '../config/environment';
-import { Catalogs } from '../interface/catalog.interface';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CatalogsService {
+export class OptionsService {
 
     private apiUrl = environment.apiUrl;
 
     constructor(
         private http: HttpClient
     ) { }
-
-    getByType(type: string): Observable<any> {
-        return this.http.get<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}/type/${type}`
-        );
-    }
 
     getAll(filters?: any): Observable<any> {
 
@@ -42,34 +34,34 @@ export class CatalogsService {
         }
 
         return this.http.get<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}`,
+            `${this.apiUrl}${API_ROUTES.OPTIONS}`,
             { params }
         );
     }
 
     getById(id: number): Observable<any> {
         return this.http.get<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}/${id}`
+            `${this.apiUrl}${API_ROUTES.OPTIONS}/${id}`
         );
     }
 
-    create(payload: Catalogs): Observable<any> {
+    create(payload: any): Observable<any> {
         return this.http.post<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}`,
+            `${this.apiUrl}${API_ROUTES.OPTIONS}`,
             payload
         );
     }
 
-    update(id: number, payload: Catalogs): Observable<any> {
+    update(id: number, payload: any): Observable<any> {
         return this.http.put<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}/${id}`,
+            `${this.apiUrl}${API_ROUTES.OPTIONS}/${id}`,
             payload
         );
     }
 
     delete(id: number): Observable<any> {
         return this.http.delete<any>(
-            `${this.apiUrl}${API_ROUTES.CATALOGS}/${id}`
+            `${this.apiUrl}${API_ROUTES.OPTIONS}/${id}`
         );
     }
 

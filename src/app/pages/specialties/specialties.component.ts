@@ -25,6 +25,7 @@ export class SpecialtiesComponent implements OnInit {
     'user-doctor',
     'tooth',
     'eye',
+    'smile',
     'bone',
     'lungs',
     'baby',
@@ -68,7 +69,7 @@ export class SpecialtiesComponent implements OnInit {
 
       field.options = this.icons.map(icon => ({
         label: icon,
-        value: `fas fa-${icon}`
+        value: icon
       }));
     }
   }
@@ -77,8 +78,8 @@ export class SpecialtiesComponent implements OnInit {
     this.loading = true;
 
     const filters = {
-      skip: 0,
-      take: 100,
+      skip: 1,
+      take: 9999,
     };
 
     this.specialtyService.getAll(filters).subscribe({
@@ -126,7 +127,7 @@ export class SpecialtiesComponent implements OnInit {
     const payload = {
         name: data.name,
         description: data.description,
-        icon: `fas fa-${data.icon}`,
+        icon: data.icon,
       }
 
     if (this.selectedSpecialty?.id) {

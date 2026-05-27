@@ -18,7 +18,7 @@ export class AppointmentsService {
     getAll(filters?: any): Observable<any> {
 
         let params = new HttpParams()
-            .set('skip', filters?.skip || 0)
+            .set('skip', filters?.skip || 1)
             .set('take', filters?.take || 10);
 
         if (filters?.status) {

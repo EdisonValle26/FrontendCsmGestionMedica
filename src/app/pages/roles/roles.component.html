@@ -18,7 +18,7 @@
     <div *ngIf="!loading" class="flex-1 min-h-0 flex gap-6 overflow-hidden">
 
         <!-- Lista de Roles -->
-        <div class="w-80 flex-shrink-0 overflow-y-auto space-y-3 p-2">
+        <div class="w-80 shrink-0 overflow-y-auto space-y-3 p-2">
             <div *ngFor="let role of roles"
                 class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 cursor-pointer"
                 [class.ring-2]="selectedRoleForPermissions?.id === role.id"

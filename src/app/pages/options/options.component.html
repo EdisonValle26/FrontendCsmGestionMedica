@@ -1,63 +1,108 @@
 <div class="h-full min-h-0 flex flex-col p-4 gap-4 overflow-hidden bg-gray-50">
 
-    <!-- Título y búsqueda -->
     <div class="shrink-0">
         <div class="flex justify-between items-center mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Opciones del Sistema</h1>
-                <p class="text-sm text-gray-500 mt-1">Módulos y funcionalidades disponibles</p>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    Opciones del Sistema
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    Módulos y funcionalidades disponibles
+                </p>
             </div>
+            <app-button
+                variant="primary"
+                (click)="openCreate()">
+                Nueva Opción
+            </app-button>
         </div>
-
-        <!-- Búsqueda -->
         <div class="relative">
-            <i class="fas fa-search absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-400"></i>
-            <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar opción..."
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                placeholder="Buscar opción..."
                 class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
         </div>
     </div>
 
-    <!-- Grid de tarjetas -->
-    <div class="flex-1 min-h-0 overflow-y-auto">
+    <!-- Loading -->
+    <div *ngIf="loading"
+        class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- Grid -->
+    <div
+        *ngIf="!loading"
+        class="flex-1 min-h-0 overflow-y-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-1">
-
-            <div *ngFor="let option of filteredOptions"
-                class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200 cursor-pointer"
-                (click)="openEditModal(option)">
-
+            <div
+                *ngFor="let option of filteredOptions"
+                class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200">
                 <div class="p-5">
-                    <!-- Icono -->
+                    <!-- Icon -->
                     <div class="flex justify-center mb-4">
-                        <div
-                            class="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i [class]="getIconClass(option.icon)" class="text-3xl text-blue-500"></i>
+                        <div class="w-16 h-16 bg-linear-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i
+                                [class]="'fas fa-' + option.icon"
+                                class="text-3xl text-blue-500">
+                            </i>
                         </div>
                     </div>
-
-                    <!-- Nombre -->
-                    <h3 class="text-center font-semibold text-gray-800 mb-2">{{ option.name }}</h3>
-
-                    <!-- Ruta -->
+                    <!-- Name -->
+                    <h3 class="text-center font-semibold text-gray-800 mb-2">
+                        {{ option.name }}
+                    </h3>
+                    <!-- Route -->
                     <div class="text-center mb-3">
-                        <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ option.route }}</code>
+                        <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            {{ option.route }}
+                        </code>
                     </div>
-
-                    <!-- Acciones -->
+                    <!-- Actions -->
                     <div class="flex justify-center gap-2 pt-3 border-t border-gray-100">
-                        <button (click)="openEditModal(option)"
+                        <button
+                            (click)="onEdit(option)"
                             class="px-3 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition">
-                            <i class="fas fa-edit mr-1"></i> Editar
+                            <i class="fas fa-edit mr-1"></i>
+                            Editar
                         </button>
-                        <button (click)="deleteOption(option)"
+
+                        <button
+                            (click)="onDelete(option.id!)"
                             class="px-3 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg transition">
-                            <i class="fas fa-trash mr-1"></i> Eliminar
+                            <i class="fas fa-trash mr-1"></i>
+                            Eliminar
                         </button>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
-
 </div>
+
+<!-- MODAL -->
+<app-modal-container
+    [title]="mode === 'create' ? 'Nueva Opción' : 'Editar Opción'"
+    [open]="isModalOpen"
+    (close)="isModalOpen = false">
+
+    <app-form
+        *ngIf="isModalOpen"
+        [fields]="formFields"
+        [data]="selectedOption"
+        [mode]="mode"
+        (submitForm)="onSave($event)">
+    </app-form>
+
+</app-modal-container>
+
+<app-alert-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Opción"
+    message="¿Está seguro de eliminar esta opción?"
+    type="warning"
+    (close)="showDeleteModal = false"
+    (confirm)="confirmDelete()">
+</app-alert-modal>
