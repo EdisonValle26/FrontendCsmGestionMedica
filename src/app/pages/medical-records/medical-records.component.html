@@ -1,1 +1,349 @@
-<p>medical-records works!</p>
+<div class="h-full min-h-0 flex flex-col gap-4 overflow-hidden bg-gray-50">
+
+    <!-- LAYOUT -->
+    <div class="flex-1 min-h-0 flex gap-4 overflow-hidden">
+
+        <!-- SIDEBAR PACIENTES -->
+        <div
+            class="w-96 flex-shrink-0 h-full flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <!-- BUSCADOR -->
+            <div class="p-4 border-b border-gray-100">
+
+                <div class="relative">
+
+                    <i class="fas fa-search absolute left-3 top-3/4 -translate-y-1/2 text-gray-400 text-sm">
+                    </i>
+
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar paciente..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+
+                </div>
+
+            </div>
+
+            <!-- PACIENTES -->
+            <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
+
+                <div *ngFor="let patient of filteredPatients" (click)="selectPatient(patient)"
+                    class="p-4 cursor-pointer hover:bg-gray-50 transition"
+                    [class.bg-blue-50]="selectedPatient?.id === patient.id">
+
+                    <div class="font-medium text-gray-800">
+                        {{ getFullName(patient) }}
+                    </div>
+
+                    <div class="text-xs text-gray-500 mt-1">
+                        {{ patient.identification }}
+                    </div>
+
+                    <div class="text-xs text-blue-600 mt-2">
+                        Última visita:
+                        {{ getLastAppointmentDate(patient) }}
+                    </div>
+
+                </div>
+
+                <div *ngIf="filteredPatients.length === 0" class="p-8 text-center text-gray-400">
+
+                    <i class="fas fa-user-slash text-3xl mb-2 opacity-50"></i>
+
+                    <p class="text-sm">
+                        No se encontraron pacientes
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DETALLE -->
+        <div *ngIf="selectedPatient" class="flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
+
+            <!-- INFO PACIENTE -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 shrink-0">
+
+                <div class="flex justify-between items-center gap-6">
+
+                    <!-- INFO PACIENTE -->
+                    <div class="flex items-center gap-4">
+
+                        <!-- DATOS -->
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 leading-tight">
+                                {{ getFullName(selectedPatient) }}
+                            </h2>
+                            <div class="flex flex-wrap items-center gap-2 mt-2">
+                                <!-- PACIENTE -->
+                                <div
+                                    class="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
+
+                                    <i class="fas fa-user-injured text-[10px]"></i>
+
+                                    <span>PACIENTE</span>
+                                </div>
+                                <!-- IDENTIFICACION -->
+                                <div
+                                    class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+
+                                    <i class="fas fa-id-card text-[10px]"></i>
+
+                                    <span>{{ selectedPatient.identification }}</span>
+
+                                </div>
+
+                                <!-- ULTIMA VISITA -->
+                                <div
+                                    class="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+
+                                    <i class="fas fa-calendar-check text-[10px]"></i>
+
+                                    <span>
+                                        Última visita:
+                                        {{ getLastAppointmentDate(selectedPatient) }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- BOTON -->
+                    <div class="flex items-center">
+                        <app-button variant="primary" (click)="openCreate()">
+                            Nuevo Historial
+                        </app-button>
+                    </div>
+
+                </div>
+
+                <!-- STATS -->
+                <div class="grid grid-cols-3 gap-4 mt-4 pt-2 border-t border-gray-100">
+
+                    <div class="text-center">
+
+                        <div class="text-2xl font-bold text-blue-600">
+                            {{ patientStats.totalVisits }}
+                        </div>
+
+                        <div class="text-xs text-gray-500 mt-1">
+                            Visitas
+                        </div>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <div class="text-2xl font-bold text-green-600">
+                            {{ patientStats.totalDiagnostics }}
+                        </div>
+
+                        <div class="text-xs text-gray-500 mt-1">
+                            Diagnósticos
+                        </div>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <div class="text-2xl font-bold text-purple-600">
+                            {{ patientStats.totalPrescriptions }}
+                        </div>
+
+                        <div class="text-xs text-gray-500 mt-1">
+                            Recetas
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- HISTORIAL -->
+            <div
+                class="flex-1 min-h-0 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+
+                <!-- HEADER -->
+                <div class="px-4 py-2 border-b border-gray-100 bg-gray-50 shrink-0">
+
+                    <h3 class="font-semibold text-gray-800">
+                        Historial Clínico
+                    </h3>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                        Registro cronológico
+                    </p>
+
+                </div>
+
+                <!-- LISTADO -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4">
+
+                    <div *ngFor="let record of getPatientRecords()"
+                        class="border border-gray-100 rounded-lg p-4 hover:shadow-md transition">
+
+                        <!-- TOP -->
+                        <div class="flex justify-between items-start mb-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+
+                                    <i class="fas fa-notes-medical text-blue-600"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="font-semibold text-gray-800">
+
+                                        {{ record.catalogs?.value || 'Sin enfermedad' }}
+
+                                    </div>
+
+                                    <div class="text-xs text-gray-500">
+
+                                        {{ formatDate(record.created_at) }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- ACCIONES -->
+                            <div class="flex items-center gap-2">
+
+                                <button (click)="onEdit(record)"
+                                    class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">
+
+                                    <i class="fas fa-pen text-xs"></i>
+
+                                </button>
+
+                                <button (click)="onDelete(record)"
+                                    class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+
+                                    <i class="fas fa-trash text-xs"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- CITA -->
+                        <div class="mb-3">
+
+                            <div class="text-xs font-medium text-gray-500 mb-1">
+                                CITA MÉDICA
+                            </div>
+
+                            <div class="text-sm text-gray-700">
+
+                                {{ record.appointments?.reason || 'Sin motivo' }}
+
+                            </div>
+
+                        </div>
+
+                        <!-- DIAGNOSTICO -->
+                        <div class="mb-3">
+
+                            <div class="text-xs font-medium text-gray-500 mb-1">
+                                DIAGNÓSTICO
+                            </div>
+
+                            <div class="text-sm text-gray-800">
+                                {{ record.diagnosis }}
+                            </div>
+
+                        </div>
+
+                        <!-- TRATAMIENTO -->
+                        <div *ngIf="record.treatment" class="mb-3">
+
+                            <div class="text-xs font-medium text-gray-500 mb-1">
+                                TRATAMIENTO
+                            </div>
+
+                            <div class="text-sm text-gray-700">
+                                {{ record.treatment }}
+                            </div>
+
+                        </div>
+
+                        <!-- OBSERVACIONES -->
+                        <div *ngIf="record.observations" class="mb-3">
+
+                            <div class="text-xs font-medium text-gray-500 mb-1">
+                                OBSERVACIONES
+                            </div>
+
+                            <div class="text-sm text-gray-600">
+                                {{ record.observations }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- EMPTY -->
+                    <div *ngIf="getPatientRecords().length === 0" class="text-center py-12 text-gray-400">
+
+                        <i class="fas fa-notes-medical text-4xl mb-2 opacity-40"></i>
+
+                        <p class="text-sm">
+                            No hay historial clínico
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PLACEHOLDER -->
+        <div *ngIf="!selectedPatient"
+            class="flex-1 flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100">
+
+            <div class="text-center text-gray-400">
+
+                <i class="fas fa-user-circle text-6xl mb-3 opacity-30"></i>
+
+                <p class="text-sm">
+                    Seleccione un paciente
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<app-modal-container [title]="
+        mode === 'create'
+            ? 'Nuevo Historial Clínico'
+            : 'Editar Historial Clínico'
+    " [open]="isModalOpen" (close)="isModalOpen = false">
+
+    <app-form *ngIf="isModalOpen" [fields]="formFields" [data]="selectedMedicalRecord" [mode]="mode"
+        (submitForm)="onSave($event)">
+    </app-form>
+
+</app-modal-container>
+
+<!-- DELETE -->
+<app-alert-modal [isOpen]="showDeleteModal" [title]="getModalTitle()" [message]="getModalMessage()" type="warning"
+    (close)="showDeleteModal = false" (confirm)="confirmDelete()">
+</app-alert-modal>

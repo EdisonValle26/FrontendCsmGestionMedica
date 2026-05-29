@@ -56,7 +56,7 @@ const routes: Routes = [
         component: PatientsComponent
       },
       {
-        path: 'medical_records ',
+        path: 'medical-records',
         component: MedicalRecordsComponent
       },
       {

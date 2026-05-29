@@ -1,0 +1,28 @@
+
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Transiciones suaves */
+.transition {
+    transition: all 0.2s ease;
+}
+
+/* Línea de tiempo visual */
+.border-l-2 {
+    border-left-width: 2px;
+}
