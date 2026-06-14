@@ -1,0 +1,24 @@
+/* Transiciones suaves */
+.transition {
+    transition: all 0.2s ease;
+}
+
+/* Efecto hover en las celdas */
+.bg-white:hover {
+    background-color: #f9fafb;
+}
+
+.bg-blue-50 {
+    background-color: #eff6ff;
+}
+
+/* Asegurar que las citas no se salgan del contenedor */
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.grid-cols-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
