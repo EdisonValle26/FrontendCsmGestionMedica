@@ -9,7 +9,7 @@ export const API_ROUTES = {
     DOCTORS: '/doctors',
     SPECIALTIES: '/specialties',
     CALENDAR: '/appointments-calendar',
-    DOCTOR_SCHEDULES: '/doctor-schedules',
+    DOCTOR_SCHEDULES: '/doctor-schedule',
     MEDICAL_RECORDS: '/medical-records',
     USERS: '/users',
     ROLES: '/roles',

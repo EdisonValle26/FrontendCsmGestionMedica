@@ -1,1 +1,247 @@
-<p>doctor-schedules works!</p>
+<div class="h-full min-h-0 flex flex-col gap-2 overflow-hidden bg-gray-50">
+
+    <div class="shrink-0 flex gap-2 border-b border-gray-200">
+        <button (click)="currentView = 'config'" class="px-4 py-2 text-sm font-medium transition"
+            [class.text-blue-600]="currentView === 'config'" [class.border-b-2]="currentView === 'config'"
+            [class.border-blue-600]="currentView === 'config'" [class.text-gray-500]="currentView !== 'config'">
+            <i class="fas fa-calendar-alt mr-2"></i>
+            Configurar Horario
+        </button>
+        <button (click)="currentView = 'weekly'" class="px-4 py-2 text-sm font-medium transition"
+            [class.text-blue-600]="currentView === 'weekly'" [class.border-b-2]="currentView === 'weekly'"
+            [class.border-blue-600]="currentView === 'weekly'" [class.text-gray-500]="currentView !== 'weekly'">
+            <i class="fas fa-calendar-week mr-2"></i>
+            Vista Semanal
+        </button>
+    </div>
+
+    <!-- VISTA DE CONFIGURACIÓN POR DOCTOR -->
+    <div *ngIf="currentView === 'config'" class="flex-1 min-h-0 flex gap-6 overflow-hidden">
+
+        <!-- Columna izquierda: Lista de médicos -->
+        <div
+            class="w-80 flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-gray-100 bg-gray-50">
+                <h3 class="font-semibold text-gray-800">Médicos</h3>
+                <p class="text-xs text-gray-500 mt-1">Seleccione un médico para configurar su horario</p>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div *ngFor="let doctor of doctors" (click)="selectedDoctor = doctor; loadDoctorSchedules()"
+                    class="p-4 hover:bg-gray-50 cursor-pointer transition border-b border-gray-100"
+                    [class.bg-blue-50]="selectedDoctor?.id === doctor.id">
+                    <div class="font-medium text-gray-800">{{ doctor.name }}</div>
+                    <div class="text-xs text-gray-500 mt-1">{{ doctor.specialty }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Configuración de horario -->
+        <div *ngIf="selectedDoctor" class="flex-1 min-h-0 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+                <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
+                    <h2 class="text-xl font-bold text-gray-800">Configurar Horario – {{ selectedDoctor.name }}</h2>
+                    <div>
+                        <p class="text-md font-semibold text-gray-600">
+                            Especialidad: 
+                            <span class="text-sm text-gray-400 mt-1">
+                                {{ selectedDoctor.specialty }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Horarios por día -->
+                <div class="divide-y divide-gray-100">
+                    <div *ngFor="let day of weekDays" class="p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold text-gray-700">{{ getDayName(day) }}</h3>
+                            <button (click)="openScheduleModal(day)" class="text-xs text-blue-500 hover:text-blue-600">
+                                <i class="fas fa-plus mr-1"></i> Agregar horario
+                            </button>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div *ngFor="let schedule of getSchedulesForDay(day)"
+                                class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-clock text-gray-400"></i>
+                                    <span class="text-sm text-gray-700">
+                                        {{ schedule.start_time }} – {{ schedule.end_time }}
+                                    </span>
+                                    <span class="text-xs text-gray-400">({{ schedule.slot_duration }} min)</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button (click)="editSchedule(schedule)" class="text-gray-400 hover:text-blue-500">
+                                        <i class="fas fa-pencil-alt text-xs"></i>
+                                    </button>
+                                    <button (click)="deleteSchedule(schedule)" class="text-gray-400 hover:text-red-500">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div *ngIf="getSchedulesForDay(day).length === 0"
+                                class="text-center py-4 text-gray-400 text-sm">
+                                <i class="fas fa-clock mr-1"></i> Sin horario configurado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div *ngIf="!selectedDoctor"
+            class="flex-1 flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="text-center text-gray-400">
+                <i class="fas fa-user-md text-6xl mb-3 opacity-30"></i>
+                <p class="text-sm">Seleccione un médico para configurar su horario</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VISTA SEMANAL -->
+    <div *ngIf="currentView === 'weekly'" class="flex-1 min-h-0 overflow-auto">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class=" py-4 px-2 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                <h2 class="font-semibold text-gray-800">Vista Semanal – Todos los Médicos</h2>
+                <div class="flex gap-2">
+                    <button (click)="previousWeek()" class="p-1 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="text-sm p-1 text-gray-600">{{ getWeekRange() }}</span>
+                    <button (click)="nextWeek()" class="p-1 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla semanal -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-600 border-r w-16">Hora</th>
+                            <th *ngFor="let day of weekDays; let dayIdx = index"
+                                class="px-3 py-2 text-center text-xs font-semibold text-gray-600 border-r min-w-[120px]">
+                                {{ getDayName(day).substring(0, 3) }}<br>
+                                <span class="text-gray-400 text-xs">{{ day.getDate() }}</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let hour of weekHours; let hourIdx = index" class="border-b border-gray-100">
+                            <td class="px-3 py-2 text-xs text-gray-500 border-r bg-gray-50 font-mono">{{ hour }}</td>
+                            <td *ngFor="let day of weekDays; let dayIdx = index"
+                                class="px-2 py-1 border-r align-top cursor-pointer transition min-h-[70px]"
+                                [class.bg-blue-100]="isCellSelected(hourIdx, dayIdx)"
+                                [class.hover:bg-gray-50]="!isCellSelected(hourIdx, dayIdx)" (mousedown)="weeklyMatrix[hourIdx]?.[dayIdx]?.length
+                                ? openEditAssign(hourIdx,dayIdx)
+                                : startCellSelection($event,hourIdx,dayIdx)"
+                                (mouseenter)="continueCellSelection(hourIdx, dayIdx)"
+                                (contextmenu)="openContextMenu($event, hourIdx, dayIdx)">
+
+                                <!-- Doctores asignados en esta celda -->
+                                <div class="space-y-1">
+                                    <div *ngFor="let item of weeklyMatrix[hourIdx]?.[dayIdx] || []"
+                                        class="text-xs rounded text-center relative group overflow-hidden"
+                                        [style.height.%]="item.percentage" [style.minHeight.px]="20" [class]="'bg-' + doctorColors[item.doctor.id] + '-100 text-' + doctorColors[item.doctor.id] + '-800'">
+                                        {{ item.doctor.name.split(' ').slice(0,2).join(' ') }}
+                                        <button (click)="clearCellSchedule(hourIdx, dayIdx, item.doctor.id, $event)"
+                                            class="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white rounded-full text-xs">
+                                            <i class="fas fa-times text-[8px]"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-2 text-center text-xs text-gray-400 border-t border-gray-100 bg-gray-50">
+                <i class="fas fa-mouse-pointer mr-1"></i>
+                Click y arrastra para seleccionar múltiples celdas | Click en una celda para asignar médico
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<app-modal-container [title]=" modalMode === 'create' ? 'Nuevo Horario' : 'Editar Horario' "
+    [open]="isScheduleModalOpen" (close)="isScheduleModalOpen=false">
+    <div *ngIf="isScheduleModalOpen" class="p-6">
+        <form [formGroup]="scheduleForm">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Hora inicio
+                </label>
+                <input type="time" formControlName="start_time" class="w-full border rounded-lg p-2">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Hora fin
+                </label>
+                <input type="time" formControlName="end_time" class="w-full border rounded-lg p-2">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Duración
+                </label>
+                <select formControlName="slot_duration" class="w-full border rounded-lg p-2">
+                    <option value="15">
+                        15 minutos
+                    </option>
+                    <option value="30">
+                        30 minutos
+                    </option>
+                    <option value="45">
+                        45 minutos
+                    </option>
+                    <option value="60">
+                        60 minutos
+                    </option>
+                </select>
+            </div>
+        </form>
+        <div class="flex justify-end gap-3 mt-6">
+            <button (click)="isScheduleModalOpen=false" class="px-4 py-2 bg-gray-100 rounded-lg">
+                Cancelar
+            </button>
+            <button (click)="saveSchedule()" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                Guardar
+            </button>
+        </div>
+    </div>
+</app-modal-container>
+
+<app-modal-container title="Asignar médico" [open]="isAssignDoctorModalOpen"
+    (close)="isAssignDoctorModalOpen=false;clearSelection()">
+    <div *ngIf="isAssignDoctorModalOpen" class="p-6">
+        <form [formGroup]="assignDoctorForm">
+            <label class="block text-sm font-medium mb-2">
+                Médico
+            </label>
+            <select formControlName="doctor_id" class="w-full border rounded-lg p-2">
+                <option value="">
+                    Seleccione médico
+                </option>
+                <option *ngFor="let doctor of doctors" [value]="doctor.id">
+                    {{doctor.name}}
+                </option>
+            </select>
+        </form>
+        <div class="flex justify-end gap-3 mt-6">
+            <button (click)="isAssignDoctorModalOpen=false" class="px-4 py-2 bg-gray-100 rounded-lg">
+                Cancelar
+            </button>
+            <button (click)="assignDoctorToCells()" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                Asignar
+            </button>
+        </div>
+    </div>
+</app-modal-container>

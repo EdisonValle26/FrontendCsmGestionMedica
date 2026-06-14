@@ -1,0 +1,126 @@
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+/* Tabla semanal */
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border-color: #e5e7eb;
+}
+
+/* Colores dinámicos para médicos */
+.bg-blue-100 {
+    background-color: #dbeafe;
+}
+
+.text-blue-800 {
+    color: #1e40af;
+}
+
+.bg-blue-500 {
+    background-color: #3b82f6;
+}
+
+.bg-green-100 {
+    background-color: #dcfce7;
+}
+
+.text-green-800 {
+    color: #166534;
+}
+
+.bg-green-500 {
+    background-color: #22c55e;
+}
+
+.bg-purple-100 {
+    background-color: #f3e8ff;
+}
+
+.text-purple-800 {
+    color: #6b21a5;
+}
+
+.bg-purple-500 {
+    background-color: #a855f7;
+}
+
+.bg-orange-100 {
+    background-color: #ffedd5;
+}
+
+.text-orange-800 {
+    color: #9a3412;
+}
+
+.bg-orange-500 {
+    background-color: #f97316;
+}
+
+.bg-pink-100 {
+    background-color: #fce7f3;
+}
+
+.text-pink-800 {
+    color: #9d174d;
+}
+
+.bg-pink-500 {
+    background-color: #ec4899;
+}
+
+.bg-teal-100 {
+    background-color: #ccfbf1;
+}
+
+.text-teal-800 {
+    color: #115e59;
+}
+
+.bg-teal-500 {
+    background-color: #14b8a6;
+}
+
+.transition {
+    transition: all 0.2s ease;
+}
+
+td {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td.cursor-cell {
+    cursor: cell;
+}
+
+@media (max-width: 768px) {
+    td {
+        min-width: 80px;
+        padding: 8px 4px !important;
+    }
+    
+    .group-hover\:flex {
+        display: flex !important;
+    }
+}
