@@ -10,7 +10,15 @@ export class AdminLayoutComponent {
 
   isSidebarOpen = true;
 
+  currentSection = 'Dashboard';
+
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  changeSection(name: string) {
+
+    this.currentSection = name;
+
   }
 }

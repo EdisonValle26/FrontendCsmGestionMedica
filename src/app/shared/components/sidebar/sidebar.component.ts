@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { API_ROUTES } from '../../../core/config/api-routes';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class SidebarComponent {
 
   @Input() isOpen = true;
   @Output() toggle = new EventEmitter<void>();
+  @Output() optionSelected = new EventEmitter<string>();
 
   user: any;
 
@@ -26,10 +28,15 @@ export class SidebarComponent {
 
   logout() {
     this.auth.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate([API_ROUTES.LOGIN]);
   }
 
   isExactRoute(route: string): boolean {
-    return route === '/dashboard';
+    return route === API_ROUTES.DASHBOARD;
   }
+
+  selectOption(name: string) {
+    this.optionSelected.emit(name);
+  }
+
 }

@@ -1,15 +1,55 @@
-<header class="bg-white border-b shadow-sm p-4 flex items-center justify-between">
+<header class="bg-white border-b shadow-sm px-6 py-3 
+flex items-center justify-between">
 
-    <!-- LEFT -->
-    <div class="flex items-center gap-3">
 
-        <button (click)="menuClick.emit()" class="p-2 rounded-lg hover:bg-gray-100 transition">
+    <div class="flex items-center gap-4">
+
+
+        <button (click)="menuClick.emit()" class="w-10 h-10 rounded-xl hover:bg-gray-100 transition">
+
             <i class="fa-solid fa-bars"></i>
+
         </button>
 
-        <h1 class="text-lg font-semibold text-gray-700">
-            Panel Admin
-        </h1>
+
+
+        <div>
+
+
+            <h1 class="text-xl font-bold text-gray-800">
+
+                {{title}}
+
+            </h1>
+
+
+            <p class="text-xs text-gray-400">
+
+                Sistema Integrado
+
+            </p>
+
+
+        </div>
+
+
 
     </div>
+
+
+
+
+    <div class="hidden md:flex items-center gap-3 
+bg-gray-50 px-4 py-2 rounded-xl">
+
+
+        <i class="fas fa-calendar text-blue-500"></i>
+
+
+        <span class="text-sm text-gray-600">
+            {{ today | date:'dd/MM/yyyy' }}
+        </span>
+
+    </div>
+
 </header>

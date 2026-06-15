@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-topbar',
@@ -7,5 +7,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
+  @Input() title = 'Dashboard';
+
   @Output() menuClick = new EventEmitter<void>();
+
+  today = new Date();
 }
