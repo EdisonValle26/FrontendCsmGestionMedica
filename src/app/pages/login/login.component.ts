@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { API_ROUTES } from '../../core/config/api-routes';
+import { FormField } from '../../core/interface/form-field.interface';
 import { AlertService } from '../../core/services/alert.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -12,16 +13,12 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class LoginComponent {
 
-  email = '';
-  password = '';
+  formFields: FormField[] = [
+    { name: 'username', label: 'Usuario', type: 'text', inputType: 'alphanumeric', required: true },
+    { name: 'password', label: 'Contraseña', type: 'password', required: true },
+  ];
 
-  //Alert
-  alertMessage = '';
-  alertType: 'success' | 'error' | 'warning' | 'info' = 'info';
-  showAlert = false;
-
-  //Alert Modal
-  showModal = false;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private auth: AuthService,
@@ -29,32 +26,19 @@ export class LoginComponent {
     private alert: AlertService
   ) { }
 
-  onConfirm() {
-    this.showModal = false;
-  }
+  onLogin(data: any) {
 
-  onLogin() {
-
-    this.auth.login(this.email, this.password)
+    this.auth.login(data.username, data.password)
       .subscribe({
-
         next: () => {
-
           this.alert.success('Bienvenido');
-
           this.router.navigate([API_ROUTES.DASHBOARD]);
-
         },
 
         error: (err) => {
-
-          this.alert.error(
-            err?.error?.message || 'Credenciales incorrectas'
-          );
-
+          this.alert.error(err?.error?.message || 'Credenciales incorrectas');
         }
 
       });
-
   }
 }

@@ -1,35 +1,80 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
+<div class="login-page">
+    <section class="login-banner">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="brand">
+            <div class="brand-logo">
+                <div class="logo-box">
+                    <i class="fas fa-heart-pulse"></i>
+                </div>
 
-    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+                <div>
+                    <h2>
+                        Clínica Santa Martha
+                    </h2>
+                    <span>
+                        Gestión Clínica
+                    </span>
+                </div>
 
-        <h2 class="text-2xl font-bold text-center mb-6">
-            Iniciar Sesión
-        </h2>
+            </div>
 
-        <!-- Alerta -->
-        <!-- <div *ngIf="showAlert" class="mb-4">
-            <app-alert [type]="alertType" [message]="alertMessage">
-            </app-alert>
-        </div> -->
+            <h1>
+                Sistema integral
+                <br>
+                <span>
+                    de administración médica
+                </span>
+            </h1>
 
-        <form (ngSubmit)="onLogin()" class="space-y-4">
+            <p>
+                Gestiona pacientes, médicos, citas e información clínica
+                desde una plataforma segura y moderna.
+            </p>
 
-            <input [(ngModel)]="email" name="email" type="email" placeholder="Correo"
-                class="w-full p-3 border rounded" />
+            <div class="features">
+                <div>
+                    <i class="fas fa-user-doctor"></i>
+                    Médicos
+                </div>
+                <div>
+                    <i class="fas fa-calendar-check"></i>
+                    Citas
+                </div>
+                <div>
+                    <i class="fas fa-file-medical"></i>
+                    Historias clínicas
+                </div>
+                <div>
+                    <i class="fas fa-chart-line"></i>
+                    Pacientes
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <input [(ngModel)]="password" name="password" type="password" placeholder="Contraseña"
-                class="w-full p-3 border rounded" />
-
-            <app-button type="submit" variant="primary" customClass="w-full mt-4">
-                Ingresar
-            </app-button>
-
-        </form>
-
-    </div>
+    <section class="login-container">
+        <div class="login-card">
+            <div class="mobile-logo">
+                <div class="logo-box">
+                    <i class="fas fa-heart-pulse"></i>
+                </div>
+            </div>
+            <h2>
+                Bienvenido
+            </h2>
+            <p>
+                Ingresa tus credenciales para continuar
+            </p>
+            <app-form 
+                [fields]="formFields" 
+                (submitForm)="onLogin($event)">
+            </app-form>
+            <div class="security">
+                <i class="fas fa-shield-halved"></i>
+                Acceso seguro protegido
+            </div>
+        </div>
+    </section>
 
 </div>
-
-<!-- <app-alert-modal [isOpen]="showModal" title="Error de autenticación" message="Credenciales incorrectas" type="error"
-    (close)="showModal = false" (confirm)="onConfirm()">
-</app-alert-modal> -->
