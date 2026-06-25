@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Doctor, DoctorSchedule } from '../../core/interface/doctor-schedule.interface';
 import { AlertService } from '../../core/services/alert.service';
+import { CatalogsService } from '../../core/services/catalogs.service';
 import { DoctorScheduleService } from '../../core/services/doctor-schedule.service';
 import { DoctorService } from '../../core/services/doctor.service';
 
@@ -52,21 +53,26 @@ export class DoctorSchedulesComponent implements OnInit {
 
   // Colores para médicos
   doctorColors: { [key: number]: string } = {};
+  consultorios: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private alertService: AlertService,
     private scheduleService: DoctorScheduleService,
-    private doctorService: DoctorService
+    private doctorService: DoctorService,
+    private catalogsService: CatalogsService
   ) {
+
     this.scheduleForm = this.fb.group({
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
-      slot_duration: [30, Validators.required]
+      slot_duration: [30, Validators.required],
+      consultorio_id: ['', Validators.required]
     });
 
     this.assignDoctorForm = this.fb.group({
       doctor_id: ['', Validators.required],
+      consultorio_id:['',Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
       slot_duration: [30, Validators.required],
@@ -79,6 +85,7 @@ export class DoctorSchedulesComponent implements OnInit {
     this.updateWeekDays();
     this.loadDoctors();
     this.loadAllSchedules();
+    this.loadConsultorios();
   }
 
 
@@ -209,7 +216,8 @@ export class DoctorSchedulesComponent implements OnInit {
     this.scheduleForm.reset({
       start_time: '08:00',
       end_time: '12:00',
-      slot_duration: 30
+      slot_duration: 30,
+      consultorio_id:''
     });
 
     this.isScheduleModalOpen = true;
@@ -225,7 +233,8 @@ export class DoctorSchedulesComponent implements OnInit {
     this.scheduleForm.patchValue({
       start_time: schedule.start_time,
       end_time: schedule.end_time,
-      slot_duration: schedule.slot_duration
+      slot_duration: schedule.slot_duration,
+      consultorio_id: schedule.consultorio_id
     });
 
     this.isScheduleModalOpen = true;
@@ -258,6 +267,7 @@ export class DoctorSchedulesComponent implements OnInit {
 
     const payload = {
       doctor_id: this.selectedDoctor.id,
+      consultorio_id: Number(value.consultorio_id),
       schedules: [
         {
           schedule_date: this.selectedDay.toISOString().substring(0, 10),
@@ -327,6 +337,7 @@ export class DoctorSchedulesComponent implements OnInit {
     this.bulkAssignMode = false;
     this.assignDoctorForm.reset({
       doctor_id: '',
+      consultorio_id:'',
       start_time: this.weekHours[hourIndex],
       end_time: `${parseInt(this.weekHours[hourIndex].split(':')[0]) + 1}:00`,
       slot_duration: 30,
@@ -417,6 +428,7 @@ export class DoctorSchedulesComponent implements OnInit {
               .some(
                 (x: any) => x.doctor.id === doctor.id
               );
+console.log("schedule: ", );
 
 
           if (!exists) {
@@ -427,6 +439,11 @@ export class DoctorSchedulesComponent implements OnInit {
                 doctor,
 
                 schedule,
+
+                consultorio:
+                  this.consultorios.find(
+                    c => c.id === schedule.consultorio_id
+                  )?.name,
 
                 percentage
 
@@ -514,17 +531,20 @@ export class DoctorSchedulesComponent implements OnInit {
     const start = this.weekHours[first.hourIndex];
 
     let doctorAsignado = '';
+let consultorioAsignado = '';
 
     const cellData = this.weeklyMatrix[first.hourIndex]?.[first.dayIndex];
 
+    console.log("cellData: ", cellData);
+    
     if (cellData && cellData.length > 0) {
-
       doctorAsignado = cellData[0].doctor.id;
-
+      consultorioAsignado = cellData[0].schedule.consultorio_id;
     }
 
     this.assignDoctorForm.reset({
       doctor_id: doctorAsignado,
+      consultorio_id: consultorioAsignado,
       start_time: start,
       end_time: `${String(parseInt(start) + 1).padStart(2, '0')}:00`,
       slot_duration: 30,
@@ -605,6 +625,7 @@ export class DoctorSchedulesComponent implements OnInit {
 
     const payload = {
       doctor_id: Number(formValue.doctor_id),
+      consultorio_id:Number(formValue.consultorio_id),
       schedules: Object.values(grouped)
     };
 
@@ -651,4 +672,17 @@ export class DoctorSchedulesComponent implements OnInit {
     }
   }
 
+  loadConsultorios() {
+    this.catalogsService
+      .getByType('CONSULTORIO')
+      .subscribe({
+        next: (res) => {
+          this.consultorios =
+            res.map((x: any) => ({
+              id: x.id,
+              name: x.value
+            }));
+        }
+      });
+  }
 }

@@ -1,10 +1,12 @@
 export interface DoctorSchedule {
     id: number;
     doctor_id: number;
+    consultorio_id: number;
     schedule_date: string;
     start_time: string;
     end_time: string;
     slot_duration: number;
+    consultorio?: Consultorio;
     is_active: boolean;
     created_at: string;
     updated_at: string | null;
@@ -18,4 +20,9 @@ export interface Doctor {
     name: string;
     specialty: string;
     specialty_id: number;
+}
+
+export interface Consultorio {
+    id: number;
+    name: string;
 }
