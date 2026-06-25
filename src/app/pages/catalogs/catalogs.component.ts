@@ -66,14 +66,14 @@ export class CatalogsComponent implements OnInit {
       name: 'code',
       label: 'Código',
       type: 'text',
-      inputType: 'letters',
+      inputType: 'alphanumeric',
       required: true
     },
     {
       name: 'value',
       label: 'Valor',
       type: 'text',
-      inputType: 'letters',
+      inputType: 'alphanumeric',
       required: true
     },
     {
