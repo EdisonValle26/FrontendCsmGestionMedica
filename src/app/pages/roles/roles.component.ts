@@ -27,10 +27,10 @@ export class RolesComponent implements OnInit {
   isModalOpen = false;
 
   showDeleteModal = false;
-  rolIdToDelete: number | null = null;
+  rolIdToDelete: any = null;
 
   formFields: FormField[] = [
-    { name: 'name', label: 'Nombre', type: 'text', inputType: 'letters', required: true },
+    { name: 'name', label: 'Nombre', type: 'text', inputType: 'letters', required: true, disableOnEdit: true },
     { name: 'description', label: 'Descripción', type: 'text', inputType: 'letters', required: true },
   ];
 
@@ -67,7 +67,13 @@ export class RolesComponent implements OnInit {
 
     this.roleService.getAll().subscribe({
       next: (res) => {
-        this.roles = res.data.filter((role: Role) => role.name !== 'PACIENTE');
+        this.roles = res.data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          status: !item.deleted_at ? 'Activo' : 'Inactivo',
+          options: item.options
+        })).filter((role: Role) => role.name !== 'PACIENTE');
         this.loading = false;
         this.buildPermissionMatrix();
         if (this.roles.length > 0 && !this.selectedRoleForPermissions) {
@@ -275,18 +281,13 @@ export class RolesComponent implements OnInit {
         .subscribe({
 
           next: () => {
-            this.alertService.success(
-              'Rol actualizado correctamente'
-            );
+            this.alertService.success('Rol actualizado correctamente');
             this.loadRoles();
             this.isModalOpen = false;
-
           },
 
           error: () => {
-            this.alertService.error(
-              'Error al actualizar Rol'
-            );
+            this.alertService.error('Error al actualizar Rol');
           }
         });
 
@@ -297,24 +298,20 @@ export class RolesComponent implements OnInit {
         .subscribe({
 
           next: () => {
-            this.alertService.success(
-              'Rol creado correctamente'
-            );
+            this.alertService.success('Rol creado correctamente');
             this.loadRoles();
             this.isModalOpen = false;
           },
 
           error: () => {
-            this.alertService.error(
-              'Error al crear Rol'
-            );
+            this.alertService.error('Error al crear Rol');
           }
         });
     }
   }
 
-  onDelete(id: number) {
-    this.rolIdToDelete = id;
+  onDelete(rol: any) {
+    this.rolIdToDelete = rol;
     this.showDeleteModal = true;
   }
 
@@ -325,23 +322,36 @@ export class RolesComponent implements OnInit {
     }
 
     this.roleService
-      .delete(this.rolIdToDelete)
+      .delete(this.rolIdToDelete.id)
       .subscribe({
 
         next: () => {
-          this.alertService.success(
-            'Rol eliminado correctamente'
-          );
+          this.alertService.success(`Rol eliminada/reactivada correctamente`);
           this.loadRoles();
           this.showDeleteModal = false;
+          this.rolIdToDelete = null;
         },
-
         error: () => {
-          this.alertService.error(
-            'Error al eliminar Rol'
-          );
+          this.alertService.error('Error al eliminadar/reactivar Rol');
         }
       });
+
+  }
+
+  getModalTitle(): string {
+    if (!this.rolIdToDelete) return '';
+    const isActive = this.rolIdToDelete.status === 'Activo';
+    return isActive ? 'Eliminar Rol' : 'Reactivar Rol';
+  }
+
+  getModalMessage(): string {
+    if (!this.rolIdToDelete) return '';
+    const isActive = this.rolIdToDelete.status === 'Activo';
+    const rolName = this.rolIdToDelete.name;
+
+    return isActive
+      ? `¿Está seguro de eliminar el Rol "${rolName}"?`
+      : `¿Está seguro de reactivar el Rol "${rolName}"?`;
   }
 
 

@@ -38,9 +38,10 @@
                                 class="text-gray-400 hover:text-blue-500 transition p-1">
                                 <i class="fas fa-pencil-alt text-xs"></i>
                             </button>
-                            <button (click)="onDelete(role.id)"
-                                class="text-gray-400 hover:text-red-500 transition p-1">
-                                <i class="fas fa-trash-alt text-xs"></i>
+                            <button (click)="onDelete(role)"
+                                class="text-gray-400 hover:text-red-500 transition-colors duration-200 z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+                                [title]="role.status === 'Activo' ? 'Eliminar especialidad' : 'Reactivar especialidad'">
+                                <i [class]="role.status === 'Activo' ? 'fas fa-trash-can text-sm' : 'fas fa-undo-alt text-sm'"></i>
                             </button>
                         </div>
                     </div>
@@ -134,9 +135,9 @@
 
 <app-alert-modal
   [isOpen]="showDeleteModal"
-  title="Eliminar Rol"
-  message="¿Está seguro de eliminar este Rol?"
-  type="warning"
-  (close)="showDeleteModal = false"
+  [title]="getModalTitle()"
+  [message]="getModalMessage()"
+  [type]="rolIdToDelete?.status === 'Activo' ? 'warning' : 'info'"
+  (close)="showDeleteModal = false; rolIdToDelete = null"
   (confirm)="confirmDelete()">
 </app-alert-modal>

@@ -5,6 +5,7 @@ export interface Role {
     name: string;
     description: string;
     deleted_at?: string | null;
+    status?: string;
     options?: Option[];
 }
 
