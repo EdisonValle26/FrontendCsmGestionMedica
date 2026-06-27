@@ -1,4 +1,17 @@
-/* ENTRADA: derecha → izquierda */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 320px;
+    z-index: 999999 !important;
+    pointer-events: none;
+}
+
+.alert-container > div {
+    pointer-events: auto;
+}
+
+/* ENTRADA */
 @keyframes slideIn {
     from {
         transform: translateX(120%);

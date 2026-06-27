@@ -116,8 +116,8 @@ export class AppointmentsComponent {
               reason: item.reason,
               notes: item.notes,
               specialty_name: item.specialties.name || '',
-              appointment_type_name: item.catalogs_appointments_appointment_type_idTocatalogs.value || '',
-              status_name: item.catalogs_appointments_status_idTocatalogs.value || '',
+              appointment_type_name: item?.catalogs_appointments_appointment_type_idTocatalogs?.value || '',
+              status_name: item?.catalogs_appointments_status_idTocatalogs?.value || '',
             };
           });
           this.loading = false;
