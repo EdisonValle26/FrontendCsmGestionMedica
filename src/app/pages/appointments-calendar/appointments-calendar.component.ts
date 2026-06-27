@@ -23,18 +23,14 @@ export class AppointmentsCalendarComponent implements OnInit {
   selectedDayAppointments: any[] = [];
   selectedDayDate: Date | null = null;
 
+  /* PAGINACIÓN */
   currentFilters: any = {
     skip: 1,
-    take: 5,
+    take: 100,
     status: 'A',
     field: ['', '', '', '', '', '']
   };
 
-  /* PAGINACIÓN */
-  totalAppointments = 0;
-  page = 1;
-  take = 5;
-  takeOptions = [5, 10, 25, 50];
   loading = false;
 
   constructor(
@@ -49,8 +45,8 @@ export class AppointmentsCalendarComponent implements OnInit {
   loadAppointments() {
 
     this.loading = true;
-    this.currentFilters.skip = this.page;
-    this.currentFilters.take = this.take;
+    this.currentFilters.skip = 1;
+    this.currentFilters.take = this.calculateCalendarTake();
 
     this.serviceAppointment
       .getAll(this.currentFilters)
@@ -190,17 +186,20 @@ export class AppointmentsCalendarComponent implements OnInit {
 
   previousMonth() {
     this.currentDate.setMonth(this.currentDate.getMonth() - 1);
-    this.updateCalendar();
+    // this.updateCalendar();
+    this.loadAppointments();
   }
 
   nextMonth() {
     this.currentDate.setMonth(this.currentDate.getMonth() + 1);
-    this.updateCalendar();
+    // this.updateCalendar();
+    this.loadAppointments();
   }
 
   goToToday() {
     this.currentDate = new Date();
-    this.updateCalendar();
+    // this.updateCalendar();
+    this.loadAppointments();
   }
 
   getAppointmentStatusClass(statusCode: string): string {
@@ -269,5 +268,23 @@ export class AppointmentsCalendarComponent implements OnInit {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return `${days[date.getDay()]}, ${date.getDate()} de ${months[date.getMonth()]} de ${date.getFullYear()}`;
+  }
+
+  private calculateCalendarTake(): number {
+
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const days =
+      Math.ceil(
+        (lastDay.getTime() - firstDay.getTime()) /
+        (1000 * 60 * 60 * 24)
+      );
+
+    return days * 5;
+
   }
 }
