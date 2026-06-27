@@ -23,7 +23,7 @@ export class TableComponent {
   @Output() takeChange = new EventEmitter<number>();
   @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<number>();
+  @Output() delete = new EventEmitter<any>();
 
   get totalPages(): number {
     return Math.ceil(

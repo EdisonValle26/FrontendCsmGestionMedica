@@ -1,6 +1,6 @@
 <form [formGroup]="form" class="w-full bg-white p-4 rounded-xl shadow mb-4 flex gap-3 items-end">
 
-    <div *ngFor="let f of filters" class="w-full flex flex-col">
+    <div *ngFor="let f of filters" [ngClass]="f.width || 'w-full'" class="flex flex-col">
 
         <label class="text-xs text-gray-500">{{ f.label }}</label>
 
