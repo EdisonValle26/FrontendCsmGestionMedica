@@ -27,62 +27,15 @@ export class CatalogsComponent implements OnInit {
 
   isModalOpen = false;
 
-  allCatalogTypeFields: FormField[] = [
-    {
-      name: 'code',
-      label: 'Código',
-      type: 'text',
-      inputType: 'letters',
-      required: true
-    },
-    {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text',
-      inputType: 'letters',
-      required: true
-    }
+  formFields: FormField[] = [
+    { name: 'code', label: 'Código', type: 'text', inputType: 'letters', required: true, disableOnEdit: true },
+    { name: 'name', label: 'Nombre', type: 'text', inputType: 'letters', required: true }
   ];
 
-  get catalogTypeFields(): FormField[] {
-
-    // EDIT
-    if (
-      this.mode === 'edit' &&
-      this.selectedCatalogType?.id
-    ) {
-
-      return this.allCatalogTypeFields.filter(
-        field => field.name !== 'code'
-      );
-    }
-
-    // CREATE
-    return this.allCatalogTypeFields;
-  }
-
   catalogItemFields: FormField[] = [
-    {
-      name: 'code',
-      label: 'Código',
-      type: 'text',
-      inputType: 'alphanumeric',
-      required: true
-    },
-    {
-      name: 'value',
-      label: 'Valor',
-      type: 'text',
-      inputType: 'alphanumeric',
-      required: true
-    },
-    {
-      name: 'description',
-      label: 'Descripción',
-      type: 'textarea',
-      inputType: 'alphanumeric',
-      required: false
-    }
+    { name: 'code', label: 'Código', type: 'text', inputType: 'alphanumeric', required: true },
+    { name: 'value', label: 'Valor', type: 'text', inputType: 'alphanumeric', required: true },
+    { name: 'description', label: 'Descripción', type: 'textarea', inputType: 'alphanumeric', required: false }
   ];
 
   /* DELETE MODAL */
@@ -94,7 +47,6 @@ export class CatalogsComponent implements OnInit {
     private catalogsService: CatalogsService,
     private catalogsTypeService: CatalogsTypeService
   ) { }
-
 
   ngOnInit() {
     this.loadCatalogs();
@@ -116,13 +68,10 @@ export class CatalogsComponent implements OnInit {
         next: (res) => {
 
           this.catalogsType = res.data.map((item: any) => ({
-
             id: item.id,
             code: item.code,
             name: item.name,
-
             totalItems: item._count.catalogs,
-
             items: item.catalogs.map((catalog: Catalogs) => ({
               id: catalog.id,
               type_id: catalog.type_id,
@@ -137,12 +86,8 @@ export class CatalogsComponent implements OnInit {
         },
 
         error: () => {
-
           this.loading = false;
-
-          this.alertService.error(
-            'Error al cargar catálogos'
-          );
+          this.alertService.error('Error al cargar catálogos');
         }
       });
 
@@ -165,33 +110,25 @@ export class CatalogsComponent implements OnInit {
 
   onSaveCatalogType(data: any) {
 
+    const payload = {
+      code: data.code,
+      name: data.name
+    };
+
     // EDIT
     if (this.selectedCatalogType?.id) {
-
-      const payload = {
-        name: data.name
-      };
-
       this.catalogsTypeService
         .update(this.selectedCatalogType.id, payload)
         .subscribe({
 
           next: () => {
-
-            this.alertService.success(
-              'Catálogo actualizado correctamente'
-            );
-
+            this.alertService.success('Catálogo actualizado correctamente');
             this.loadCatalogs();
-
             this.showCatalogTypeModal = false;
           },
 
           error: () => {
-
-            this.alertService.error(
-              'Error al actualizar catálogo'
-            );
+            this.alertService.error('Error al actualizar catálogo');
           }
         });
 
@@ -199,31 +136,18 @@ export class CatalogsComponent implements OnInit {
     }
 
     // CREATE
-    const payload = {
-      code: data.code,
-      name: data.name
-    };
-
     this.catalogsTypeService
       .create(payload)
       .subscribe({
 
         next: () => {
-
-          this.alertService.success(
-            'Catálogo creado correctamente'
-          );
-
+          this.alertService.success('Catálogo creado correctamente');
           this.loadCatalogs();
-
           this.showCatalogTypeModal = false;
         },
 
         error: () => {
-
-          this.alertService.error(
-            'Error al crear catálogo'
-          );
+          this.alertService.error('Error al crear catálogo');
         }
       });
   }
@@ -231,13 +155,11 @@ export class CatalogsComponent implements OnInit {
   openCreateItem(catalog: any) {
 
     this.selectedCatalog = catalog;
-
     this.selectedItem = {
       type_id: catalog.id
     };
 
     this.mode = 'create';
-
     this.showItemModal = true;
   }
 
@@ -250,7 +172,6 @@ export class CatalogsComponent implements OnInit {
     };
 
     this.mode = 'edit';
-
     this.showItemModal = true;
   }
 
@@ -271,21 +192,13 @@ export class CatalogsComponent implements OnInit {
         .subscribe({
 
           next: () => {
-
-            this.alertService.success(
-              'Catálogo actualizado correctamente'
-            );
-
+            this.alertService.success('Catálogo actualizado correctamente');
             this.loadCatalogs();
-
             this.showItemModal = false;
           },
 
           error: () => {
-
-            this.alertService.error(
-              'Error al actualizar catálogo'
-            );
+            this.alertService.error('Error al actualizar catálogo');
           }
         });
 
@@ -299,21 +212,13 @@ export class CatalogsComponent implements OnInit {
       .subscribe({
 
         next: () => {
-
-          this.alertService.success(
-            'Catálogo creado correctamente'
-          );
-
+          this.alertService.success('Catálogo creado correctamente');
           this.loadCatalogs();
-
           this.showItemModal = false;
         },
 
         error: () => {
-
-          this.alertService.error(
-            'Error al crear catálogo'
-          );
+          this.alertService.error('Error al crear catálogo');
         }
       });
 
@@ -325,7 +230,6 @@ export class CatalogsComponent implements OnInit {
   }
 
   confirmDelete() {
-
     if (!this.catalogIdToDelete) {
       return;
     }
@@ -334,28 +238,17 @@ export class CatalogsComponent implements OnInit {
       .delete(this.catalogIdToDelete.id)
       .subscribe({
 
-
         next: () => {
-
-          this.alertService.success(
-            'Catálogo eliminado/reactivado correctamente'
-          );
-
+          this.alertService.success('Catálogo eliminado/reactivado correctamente');
           this.loadCatalogs();
-
           this.showDeleteModal = false;
-
           this.catalogIdToDelete = null;
         },
 
         error: () => {
-
-          this.alertService.error(
-            'Error al eliminar/reactivar catálogo'
-          );
+          this.alertService.error('Error al eliminar/reactivar catálogo');
         }
       });
-
   }
 
   getModalTitle(): string {
@@ -364,12 +257,8 @@ export class CatalogsComponent implements OnInit {
       return '';
     }
 
-    const isActive =
-      this.catalogIdToDelete.status === 'Activo';
-
-    return isActive
-      ? 'Eliminar catálogo'
-      : 'Reactivar catálogo';
+    const isActive = this.catalogIdToDelete.status === 'Activo';
+    return isActive ? 'Eliminar catálogo' : 'Reactivar catálogo';
   }
 
   getModalMessage(): string {
@@ -378,11 +267,8 @@ export class CatalogsComponent implements OnInit {
       return '';
     }
 
-    const isActive =
-      this.catalogIdToDelete.status === 'Activo';
-
-    const catalogName =
-      this.catalogIdToDelete.value;
+    const isActive = this.catalogIdToDelete.status === 'Activo';
+    const catalogName = this.catalogIdToDelete.value;
 
     return isActive
       ? `¿Está seguro de eliminar el catálogo "${catalogName}"?`

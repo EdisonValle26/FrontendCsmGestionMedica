@@ -82,7 +82,7 @@
 
     <app-form
         *ngIf="showCatalogTypeModal"
-        [fields]="catalogTypeFields"
+        [fields]="formFields"
         [data]="selectedCatalogType"
         (submitForm)="onSaveCatalogType($event)"
         [mode]="mode">
