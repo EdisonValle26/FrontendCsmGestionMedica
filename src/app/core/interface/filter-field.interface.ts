@@ -4,4 +4,5 @@ export interface FilterField {
     type: 'text' | 'date' | 'select' ;
     options?: { label: string; value: any }[];
     width?: string;
+    defaultValue?: any;
 }

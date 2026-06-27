@@ -20,7 +20,9 @@ export class FiltersComponent {
     const group: any = {};
 
     this.filters.forEach(f => {
-      group[f.name] = new FormControl('');
+      group[f.name] = new FormControl(
+        f.defaultValue ?? ''
+      );
     });
 
     this.form = new FormGroup(group);
@@ -33,6 +35,13 @@ export class FiltersComponent {
   }
 
   clear() {
-    this.form.reset();
+
+    const values: any = {};
+
+    this.filters.forEach(f => {
+      values[f.name] = f.defaultValue ?? '';
+    });
+
+    this.form.reset(values);
   }
 }
