@@ -67,4 +67,10 @@ export class SpecialtyService {
         );
     }
 
+    getSpecialtyIdDoctor(doctorId: number): Observable<any> {
+        return this.http.get<any>(
+            `${this.apiUrl}${API_ROUTES.SPECIALTIES}/doctor/${doctorId}`
+        );
+    }
+
 }

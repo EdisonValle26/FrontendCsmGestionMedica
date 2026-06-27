@@ -4,7 +4,7 @@ export interface Appointment {
     doctor_id: number,
     specialty_id: number,
     appointment_date: string,
-    appointment_time: string,
+    appointment_time: Date,
     duration_minutes: number,
     appointment_type_id: number,
     appointment_status_id: number,

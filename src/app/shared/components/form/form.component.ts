@@ -15,10 +15,11 @@ export class FormComponent implements OnChanges {
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
 
   @Output() submitForm = new EventEmitter<any>();
+  @Output() fieldChange = new EventEmitter<any>();
 
   form!: FormGroup;
   showPassword = false;
-  
+
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -36,6 +37,13 @@ export class FormComponent implements OnChanges {
         this.form.disable();
       }
     }
+  }
+
+  onFieldChange(field: FormField, event: any) {
+    this.fieldChange.emit({
+      name: field.name,
+      value: event.target.value
+    });
   }
 
   buildForm() {

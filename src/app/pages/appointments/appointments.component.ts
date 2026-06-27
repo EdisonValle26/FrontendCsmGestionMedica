@@ -82,7 +82,6 @@ export class AppointmentsComponent {
     this.loadCatalogs();
     this.loadPatient();
     this.loadDoctor();
-    this.loadSpecialty();
   }
 
   loadAppointments() {
@@ -144,6 +143,11 @@ export class AppointmentsComponent {
     };
     this.isModalOpen = true;
     this.mode = 'edit';
+    if (appointment.doctor_id) {
+      this.loadSpecialtyDoctorId(
+        appointment.doctor_id
+      );
+    }
   }
 
   onView(appointment: any) {
@@ -161,7 +165,10 @@ export class AppointmentsComponent {
       doctor_id: Number(data.doctor_id),
       specialty_id: Number(data.specialty_id),
       appointment_date: data.appointment_date,
-      appointment_time: data.appointment_time,
+      appointment_time: this.formatTime(
+        String(data.appointment_time),
+        data.appointment_date
+      ),
       duration_minutes: 30,
       appointment_type_id: Number(data.appointment_type_id),
       appointment_status_id: Number(data.appointment_status_id),
@@ -184,10 +191,9 @@ export class AppointmentsComponent {
 
           },
 
-          error: () => {
-            this.alertService.error(
-              'Error al actualizar cita'
-            );
+          error: (error) => {
+            const msg = error?.error?.message || 'Error al actualizar cita';
+            this.alertService.error(msg);
           }
         });
 
@@ -205,10 +211,9 @@ export class AppointmentsComponent {
             this.isModalOpen = false;
           },
 
-          error: () => {
-            this.alertService.error(
-              'Error al crear cita'
-            );
+          error: (error) => {
+            const msg = error?.error?.message || 'Error al crear cita';
+            this.alertService.error(msg);
           }
         });
     }
@@ -347,28 +352,65 @@ export class AppointmentsComponent {
       });
   }
 
-  loadSpecialty() {
-    const filter = {
-      skip: 1,
-      take: 9999,
-      status: 'A',
-    };
-
-    this.serviceSpecialty.getAll(filter)
+  loadSpecialtyDoctorId(doctorId: number) {
+    this.serviceSpecialty.getSpecialtyIdDoctor(doctorId)
       .subscribe({
-
         next: (res) => {
           const field = this.formFields.find(
             f => f.name === 'specialty_id'
           );
 
           if (field) {
-            field.options = res.data.map((item: any) => (
-              { label: item.name, value: item.id }
-            ));
+            field.options = res.data.map((item: any) => ({
+              label: item.name,
+              value: item.id
+            }));
+
+            if (this.selectedAppointments?.specialty_id) {
+              this.selectedAppointments = {
+                ...this.selectedAppointments,
+                specialty_id: this.selectedAppointments.specialty_id
+              };
+            }
           }
         }
       });
+  }
+
+  onDoctorChange(doctorId: number) {
+
+    if (!doctorId) {
+      const field = this.formFields.find(
+        f => f.name === 'specialty_id'
+      );
+
+      if (field) {
+        field.options = [];
+      }
+
+      return;
+    }
+
+    this.loadSpecialtyDoctorId(doctorId);
+  }
+
+  onFieldChange(event: any) {
+
+    if (event.name === 'doctor_id') {
+
+      this.onDoctorChange(
+        Number(event.value)
+      );
+
+    }
+
+  }
+
+  private formatTime(time: string, appointmentDate: string) {
+    const [h, m] = time.split(':').map(Number);
+    const date = new Date(`${appointmentDate}T00:00:00`);
+    date.setUTCHours(h, m, 0, 0);
+    return date;
   }
 
 }

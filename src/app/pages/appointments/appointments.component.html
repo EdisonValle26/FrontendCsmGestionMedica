@@ -38,6 +38,7 @@
   [fields]="formFields"
   [data]="selectedAppointments"
   (submitForm)="onSave($event)"
+  (fieldChange)="onFieldChange($event)"
   [mode]="mode">
 </app-form>
 
