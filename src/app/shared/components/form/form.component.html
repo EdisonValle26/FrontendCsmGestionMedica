@@ -7,7 +7,7 @@
         <!-- TEXT -->
         <input *ngIf="field.type === 'text'" [formControlName]="field.name" [placeholder]="field.placeholder || ''"
             (input)="onInput($event, field)" [attr.maxLength]="field.maxLength || null" [ngClass]="{
-                'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view'
+                'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view' || (mode === 'edit' && field.disableOnEdit)
                 }"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
@@ -16,7 +16,7 @@
 
             <input [type]="showPassword ? 'text' : 'password'" [formControlName]="field.name"
                 [placeholder]="field.placeholder || ''" [ngClass]="{
-                'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view'
+                'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view' || (mode === 'edit' && field.disableOnEdit)
                 }"
                 class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 pr-10 rounded-lg transition" />
             <button *ngIf="mode === 'create'" type="button" (click)="showPassword = !showPassword"
@@ -30,25 +30,25 @@
         <textarea *ngIf="field.type === 'textarea'" [formControlName]="field.name "
             [placeholder]="field.placeholder || ''" (input)="onInput($event, field)"
             [attr.maxLength]="field.maxLength || null"
-            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view'}"
+            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view' || (mode === 'edit' && field.disableOnEdit)}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
         </textarea>
 
         <!-- DATE -->
         <input *ngIf="field.type === 'date'" type="date" [formControlName]="field.name"
-            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view'}"
+            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view' || (mode === 'edit' && field.disableOnEdit)}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- TIME -->
         <input *ngIf="field.type === 'time'" type="time" [formControlName]="field.name"
-            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view'}"
+            [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': mode === 'view' || (mode === 'edit' && field.disableOnEdit)}"
             class="w-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition" />
 
         <!-- SELECT -->
         <select *ngIf="field.type === 'select'" [formControlName]="field.name" (change)="onFieldChange(field, $event)"
             [ngClass]="{
             'bg-gray-100 text-gray-500 cursor-not-allowed':
-            mode === 'view'
+            mode === 'view' || (mode === 'edit' && field.disableOnEdit)
             }" class="w-full border border-gray-300 focus:border-blue-500
             focus:ring-2 focus:ring-blue-200 p-2 rounded-lg transition">
             <option *ngFor="let opt of field.options" [value]="opt.value">

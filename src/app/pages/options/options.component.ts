@@ -25,9 +25,8 @@ export class OptionsComponent implements OnInit {
 
   formFields: FormField[] = [
     { name: 'name', label: 'Nombre', type: 'text', required: true },
-    { name: 'route', label: 'Ruta', type: 'text', required: true },
+    { name: 'route', label: 'Ruta', type: 'text', required: true, disableOnEdit: true },
     { name: 'icon', label: 'Icono', type: 'select', required: true, options: [] }
-
   ];
 
   icons = [

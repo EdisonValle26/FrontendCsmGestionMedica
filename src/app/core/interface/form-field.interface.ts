@@ -32,4 +32,5 @@ export interface FormField {
 
     minLength?: number;
     maxLength?: number;
+    disableOnEdit?: boolean;
 }

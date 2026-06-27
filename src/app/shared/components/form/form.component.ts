@@ -106,9 +106,13 @@ export class FormComponent implements OnChanges {
           );
           break;
       }
+      const disabled = this.mode === 'edit' &&  field.disableOnEdit;
 
       group[field.name] = [
-        this.data?.[field.name] ?? '',
+        {
+          value: this.data?.[field.name] ?? '',
+          disabled
+        },
         validators
       ];
     });
@@ -122,7 +126,7 @@ export class FormComponent implements OnChanges {
       return;
     }
 
-    this.submitForm.emit(this.form.value);
+    this.submitForm.emit(this.form.getRawValue());
   }
 
 
