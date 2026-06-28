@@ -21,7 +21,7 @@ export class FiltersComponent {
 
     this.filters.forEach(f => {
       group[f.name] = new FormControl(
-        f.defaultValue ?? ''
+        f.value ?? f.defaultValue ?? ''
       );
     });
 

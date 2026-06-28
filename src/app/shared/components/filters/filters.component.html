@@ -17,7 +17,6 @@
         <div class="relative" *ngIf="f.type === 'select'">
             <i class="fas fa-chevron-down absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-400"></i>
             <select [formControlName]="f.name" class="border p-2 pl-10 rounded w-full appearance-none">
-                <option value="">Todos</option>
                 <option *ngFor="let opt of f.options" [value]="opt.value">
                     {{ opt.label }}
                 </option>

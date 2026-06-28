@@ -1,55 +1,66 @@
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Gestión de Citas</h1>
-    <app-button variant="primary" (click)="openCreate()">
-        Nueva Cita
-    </app-button>
+<div class="h-full min-h-0 flex flex-col p-2 gap-2 overflow-hidden">
+
+  <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Gestión de Citas</h1>
+      <app-button variant="primary" (click)="openCreate()">
+          Nueva Cita
+      </app-button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+  </div>
+
+  <div *ngIf="!loading" class="flex-1 min-h-0 overflow-y-auto">
+
+    <!-- FILTROS -->
+    <app-filters
+      [filters]="filtersConfig"
+      (filterChange)="onFilter($event)">
+    </app-filters>
+
+    <!-- TABLA -->
+    <app-table
+      [data]="appointments"
+      [columns]="columns"
+      [loading]="loading"
+      [total]="totalAppointments"
+      [page]="page"
+      [take]="take"
+      [takeOptions]="takeOptions"
+      (pageChange)="onPageChange($event)"
+      (takeChange)="onTakeChange($event)"
+      (view)="onView($event)"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)">
+    </app-table>
+
+    <!-- MODAL -->
+    <app-modal-container
+      [title]=" mode === 'create' ? 'Nueva Cita' : mode === 'edit' ? 'Editar Cita'  : 'Ver Cita' "
+      [open]="isModalOpen"
+      (close)="isModalOpen = false">
+
+    <app-form
+      *ngIf="isModalOpen"
+      [fields]="formFields"
+      [data]="selectedAppointments"
+      (submitForm)="onSave($event)"
+      (fieldChange)="onFieldChange($event)"
+      [mode]="mode">
+    </app-form>
+
+    </app-modal-container>
+
+    <app-alert-modal
+      [isOpen]="showDeleteModal"
+      [title]="getModalTitle()"
+      [message]="getModalMessage()"
+      [type]="appointmentIdToDelete?.status === 'Activo' ? 'warning' : 'info'"
+      (close)="showDeleteModal = false; appointmentIdToDelete = null"
+      (confirm)="confirmDelete()">
+    </app-alert-modal>
+
+  </div>
 </div>
-
-<!-- FILTROS -->
-<app-filters
-  [filters]="filtersConfig"
-  (filterChange)="onFilter($event)">
-</app-filters>
-
-<!-- TABLA -->
-<app-table
-  [data]="appointments"
-  [columns]="columns"
-  [loading]="loading"
-  [total]="totalAppointments"
-  [page]="page"
-  [take]="take"
-  [takeOptions]="takeOptions"
-  (pageChange)="onPageChange($event)"
-  (takeChange)="onTakeChange($event)"
-  (view)="onView($event)"
-  (edit)="onEdit($event)"
-  (delete)="onDelete($event)">
-</app-table>
-
-<!-- MODAL -->
-<app-modal-container
-  [title]=" mode === 'create' ? 'Nueva Cita' : mode === 'edit' ? 'Editar Cita'  : 'Ver Cita' "
-  [open]="isModalOpen"
-  (close)="isModalOpen = false">
-
-<app-form
-  *ngIf="isModalOpen"
-  [fields]="formFields"
-  [data]="selectedAppointments"
-  (submitForm)="onSave($event)"
-  (fieldChange)="onFieldChange($event)"
-  [mode]="mode">
-</app-form>
-
-</app-modal-container>
-
-
-<app-alert-modal
-  [isOpen]="showDeleteModal"
-  title="Eliminar Cita"
-  message="¿Está seguro de eliminar esta Cita?"
-  type="warning"
-  (close)="showDeleteModal = false"
-  (confirm)="confirmDelete()">
-</app-alert-modal>

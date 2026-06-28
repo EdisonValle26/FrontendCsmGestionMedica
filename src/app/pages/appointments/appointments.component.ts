@@ -47,16 +47,24 @@ export class AppointmentsComponent {
     { name: 'notes', label: 'Notas', type: 'text', inputType: 'alphanumeric' },
   ];
 
-  filtersConfig: FilterField[] = [
-    { name: 'value_field', label: 'Buscar Cita', type: 'text' }
-  ];
-
   currentFilters: any = {
     skip: 1,
     take: 5,
     status: 'A',
     field: ['', '', '', '', '', '']
   };
+
+  filtersConfig: FilterField[] = [
+    {
+      name: 'status', label: 'Estado', type: 'select', width: 'w-48', defaultValue: this.currentFilters.status,
+      options: [
+        { label: 'Todos', value: 'ALL' },
+        { label: 'Activos', value: 'A' },
+        { label: 'Inactivos', value: 'I' }
+      ]
+    },
+    { name: 'value_field', label: 'Buscar Cita', type: 'text' }
+  ];
 
   /* PAGINACIÓN */
   totalAppointments = 0;
@@ -66,7 +74,7 @@ export class AppointmentsComponent {
 
   /* DELETE MODAL */
   showDeleteModal = false;
-  appointmentIdToDelete: number | null = null;
+  appointmentIdToDelete: any = null;
 
   constructor(
     private serviceAppointment: AppointmentsService,
@@ -117,6 +125,7 @@ export class AppointmentsComponent {
               specialty_name: item.specialties.name || '',
               appointment_type_name: item?.catalogs_appointments_appointment_type_idTocatalogs?.value || '',
               status_name: item?.catalogs_appointments_status_idTocatalogs?.value || '',
+              status: !item.deleted_at ? 'Activo' : 'Inactivo',
             };
           });
           this.loading = false;
@@ -125,7 +134,7 @@ export class AppointmentsComponent {
         error: () => {
           this.loading = false;
           this.alertService.error(
-            'Error al cargar pacientes'
+            'Error al cargar citas'
           );
         }
       });
@@ -219,16 +228,37 @@ export class AppointmentsComponent {
     }
   }
 
-  onDelete(id: number) {
-    this.appointmentIdToDelete = id;
+  onDelete(appointment: any) {
+    this.appointmentIdToDelete = appointment;
     this.showDeleteModal = true;
   }
 
   onFilter(filters: any) {
+
     this.currentFilters = {
       ...this.currentFilters,
-      value_field: filters.value_field || ''
+      value_field: filters.value_field || '',
     };
+
+    if (filters.status === 'ALL') {
+      delete this.currentFilters.status;
+    } else {
+      this.currentFilters.status = filters.status;
+    }
+
+    this.filtersConfig = this.filtersConfig.map(f => {
+
+      if (f.name === 'status') {
+        return {
+          ...f,
+          value: filters.status
+        };
+      }
+
+      return f;
+    });
+
+    this.page = 1;
     this.loadAppointments();
   }
 
@@ -241,8 +271,8 @@ export class AppointmentsComponent {
     this.take = take;
     this.page = 1;
     this.loadAppointments();
-
   }
+
   confirmDelete() {
 
     if (!this.appointmentIdToDelete) {
@@ -250,23 +280,36 @@ export class AppointmentsComponent {
     }
 
     this.serviceAppointment
-      .delete(this.appointmentIdToDelete)
+      .delete(this.appointmentIdToDelete.id)
       .subscribe({
 
         next: () => {
-          this.alertService.success(
-            'Paciente eliminado correctamente'
-          );
+          this.alertService.success('Cita eliminada/reactivada correctamente');
+
           this.loadAppointments();
           this.showDeleteModal = false;
+          this.appointmentIdToDelete = null;
         },
 
         error: () => {
-          this.alertService.error(
-            'Error al eliminar paciente'
-          );
+          this.alertService.error('Error al eliminar/reactivar Cita');
         }
       });
+  }
+
+  getModalTitle(): string {
+    if (!this.appointmentIdToDelete) return '';
+    const isActive = this.appointmentIdToDelete.status === 'Activo';
+    return isActive ? 'Eliminar Cita' : 'Reactivar Cita';
+  }
+
+  getModalMessage(): string {
+    if (!this.appointmentIdToDelete) return '';
+    const isActive = this.appointmentIdToDelete.status === 'Activo';
+
+    return isActive
+      ? '¿Está seguro de eliminar la Cita?'
+      : '¿Está seguro de reactivar la Cita?';
   }
 
   loadCatalogs() {

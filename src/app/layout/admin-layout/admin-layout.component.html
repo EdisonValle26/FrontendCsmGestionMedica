@@ -1,26 +1,25 @@
-<div class="flex h-screen bg-gray-50 overflow-hidden">
+<div class="flex min-h-screen bg-gray-50 overflow-hidden">
 
     <!-- SIDEBAR -->
-    <app-sidebar
-        [isOpen]="isSidebarOpen"
-        (toggle)="toggleSidebar()"
-        (optionSelected)="changeSection($event)">
+    <app-sidebar 
+    [isOpen]="isSidebarOpen" 
+    (toggle)="toggleSidebar()" 
+    (optionSelected)="changeSection($event)">
     </app-sidebar>
 
     <!-- CONTENIDO -->
-    <div class="flex-1 flex flex-col min-h-0">
-
+    <div class="flex-1 min-w-0 flex flex-col">
         <!-- TOPBAR -->
         <app-topbar 
-            [title]="currentSection"
-            (menuClick)="toggleSidebar()">
+        [title]="currentSection" 
+        (menuClick)="toggleSidebar()">
         </app-topbar>
 
         <!-- MAIN -->
-        <main class="flex-1 overflow-hidden px-6 py-2 min-h-0">
-            <router-outlet></router-outlet>
+        <main class="flex-1 min-h-0 overflow-auto px-3 py-2 md:px-6">
+            <div class="w-full max-w-full overflow-x-auto">
+                <router-outlet></router-outlet>
+            </div>
         </main>
-
     </div>
-
 </div>
