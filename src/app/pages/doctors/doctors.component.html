@@ -1,51 +1,61 @@
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Gestión de Doctores</h1>
-    <app-button variant="primary">
-        Nuevo Doctor
-    </app-button>
+<div class="h-full min-h-0 flex flex-col p-2 gap-2 overflow-hidden">
+
+  <div class="flex justify-between items-center mb-2">
+      <h1 class="text-2xl font-bold">Gestión de Doctores</h1>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+  </div>
+
+  <div *ngIf="!loading" class="flex-1 min-h-0 overflow-y-auto">
+
+    <!-- FILTROS -->
+    <app-filters
+      [filters]="filtersConfig"
+      (filterChange)="onFilter($event)">
+    </app-filters>
+
+    <!-- TABLA -->
+    <app-table
+      [data]="doctors"
+      [columns]="columns"
+      [loading]="loading"
+      [total]="totalDoctors"
+      [page]="page"
+      [take]="take"
+      [takeOptions]="takeOptions"
+      (pageChange)="onPageChange($event)"
+      (takeChange)="onTakeChange($event)"
+      (view)="onView($event)"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)">
+    </app-table>
+
+    <!-- MODAL -->
+    <app-modal-container
+      [title]=" mode === 'create' ? 'Nuevo Doctor' : mode === 'edit' ? 'Editar Doctor'  : 'Ver Doctor' "
+      [open]="isModalOpen"
+      (close)="isModalOpen = false">
+
+    <app-form
+      *ngIf="isModalOpen"
+      [fields]="formFields"
+      [data]="selectedDoctors"
+      (submitForm)="onSave($event)"
+      [mode]="mode">
+    </app-form>
+
+    </app-modal-container>
+
+    <app-alert-modal
+      [isOpen]="showDeleteModal"
+      [title]="getModalTitle()"
+      [message]="getModalMessage()"
+      [type]="doctorIdToDelete?.status === 'Activo' ? 'warning' : 'info'"
+      (close)="showDeleteModal = false; doctorIdToDelete = null"
+      (confirm)="confirmDelete()">
+    </app-alert-modal>
+  </div>
 </div>
-
-<!-- FILTROS -->
-<app-filters
-  [filters]="filtersConfig"
-  (filterChange)="onFilter($event)">
-</app-filters>
-
-<!-- TABLA -->
-<app-table
-  [data]="doctors"
-  [columns]="columns"
-  [loading]="loading"
-  [total]="totalDoctors"
-  [page]="page"
-  [take]="take"
-  [takeOptions]="takeOptions"
-  (pageChange)="onPageChange($event)"
-  (takeChange)="onTakeChange($event)"
-  (view)="onView($event)"
-  (delete)="onDelete($event)">
-</app-table>
-
-<!-- MODAL -->
-<app-modal-container
-  [title]=" mode === 'create' ? 'Nuevo Doctor' : mode === 'edit' ? 'Editar Doctor'  : 'Ver Doctor' "
-  [open]="isModalOpen"
-  (close)="isModalOpen = false">
-
-<app-form
-  *ngIf="isModalOpen"
-  [fields]="formFields"
-  [data]="selectedDoctors"
-  [mode]="mode">
-</app-form>
-
-</app-modal-container>
-
-<app-alert-modal
-  [isOpen]="showDeleteModal"
-  title="Eliminar doctor"
-  message="¿Está seguro de eliminar este doctor?"
-  type="warning"
-  (close)="showDeleteModal = false"
-  (confirm)="confirmDelete()">
-</app-alert-modal>
