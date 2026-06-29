@@ -31,7 +31,9 @@ export class UsersComponent {
   ];
 
   allFormFields: FormField[] = [
+    { name: 'rol_id', label: 'Rol', type: 'select', required: true, options: [] },
     { name: 'identification', label: 'Identificación', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },
+    { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [] },
     { name: 'username', label: 'Usuario', type: 'text', inputType: 'alphanumeric', required: true },
     { name: 'password', label: 'Contraseña', type: 'password', required: true },
     { name: 'first_name', label: 'Nombres', type: 'text', inputType: 'letters', required: true },
@@ -41,13 +43,7 @@ export class UsersComponent {
     { name: 'address', label: 'Dirección', type: 'text', inputType: 'alphanumeric', required: true },
     { name: 'birth_date', label: 'Fecha de Nacimiento', type: 'date', required: true },
     { name: 'gender_id', label: 'Género', type: 'select', required: true, options: [] },
-    { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [] },
     { name: 'nationality_id', label: 'Nacionalidad', type: 'select', required: true, options: [] },
-    { name: 'rol_id', label: 'Rol', type: 'select', required: true, options: [] },
-  ];
-
-  filtersConfig: FilterField[] = [
-    { name: 'value_field', label: 'Buscar usuario', type: 'text' }
   ];
 
   currentFilters: any = {
@@ -57,6 +53,18 @@ export class UsersComponent {
     field: ['first_name', 'last_name', 'identification', 'email', 'phone', 'address']
   };
 
+  filtersConfig: FilterField[] = [
+    {
+      name: 'status', label: 'Estado', type: 'select', width: 'w-48', defaultValue: this.currentFilters.status,
+      options: [
+        { label: 'Todos', value: 'ALL' },
+        { label: 'Activos', value: 'A' },
+        { label: 'Inactivos', value: 'I' }
+      ]
+    },
+    { name: 'value_field', label: 'Buscar usuario', type: 'text' }
+  ];
+
   /* PAGINACIÓN */
   totalUsers = 0;
   page = 1;
@@ -65,7 +73,7 @@ export class UsersComponent {
 
   /* DELETE MODAL */
   showDeleteModal = false;
-  userIdToDelete: number | null = null;
+  userIdToDelete: any = null;
 
   get formFields(): FormField[] {
 
@@ -74,6 +82,7 @@ export class UsersComponent {
 
       return this.allFormFields.filter(field =>
         [
+          'rol_id',
           'identification',
           'document_type_id',
           'first_name',
@@ -86,7 +95,6 @@ export class UsersComponent {
           'birth_date',
           'gender_id',
           'nationality_id',
-          'rol_id'
         ].includes(field.name)
       );
     }
@@ -158,7 +166,8 @@ export class UsersComponent {
               address: item.persons?.address || '',
               gender_id: item.persons?.gender_id || null,
               nationality_id: item.persons?.nationality_id || null,
-              birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : ''
+              birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : '',
+              status: !item.deleted_at ? 'Activo' : 'Inactivo',
             };
           });
           this.loading = false;
@@ -166,9 +175,7 @@ export class UsersComponent {
 
         error: () => {
           this.loading = false;
-          this.alertService.error(
-            'Error al cargar usuarios'
-          );
+          this.alertService.error('Error al cargar usuarios');
         }
       });
   }
@@ -272,16 +279,37 @@ export class UsersComponent {
     }
   }
 
-  onDelete(id: number) {
-    this.userIdToDelete = id;
+  onDelete(user: any) {
+    this.userIdToDelete = user;
     this.showDeleteModal = true;
   }
 
   onFilter(filters: any) {
+
     this.currentFilters = {
       ...this.currentFilters,
-      value_field: filters.value_field || ''
+      value_field: filters.value_field || '',
     };
+
+    if (filters.status === 'ALL') {
+      delete this.currentFilters.status;
+    } else {
+      this.currentFilters.status = filters.status;
+    }
+
+    this.filtersConfig = this.filtersConfig.map(f => {
+
+      if (f.name === 'status') {
+        return {
+          ...f,
+          value: filters.status
+        };
+      }
+
+      return f;
+    });
+
+    this.page = 1;
     this.loadUsers();
   }
 
@@ -307,19 +335,32 @@ export class UsersComponent {
       .subscribe({
 
         next: () => {
-          this.alertService.success(
-            'Usuario eliminado correctamente'
-          );
+          this.alertService.success('Usuario eliminado/reactivado correctamente');
           this.loadUsers();
           this.showDeleteModal = false;
+          this.userIdToDelete = null;
         },
 
         error: () => {
-          this.alertService.error(
-            'Error al eliminar usuario'
-          );
+          this.alertService.error('Error al eliminar/reactivar Usuario');
         }
       });
+  }
+
+  getModalTitle(): string {
+    if (!this.userIdToDelete) return '';
+    const isActive = this.userIdToDelete.status === 'Activo';
+    return isActive ? 'Eliminar Usuario' : 'Reactivar Usuario';
+  }
+
+  getModalMessage(): string {
+    if (!this.userIdToDelete) return '';
+    const isActive = this.userIdToDelete.status === 'Activo';
+    const userName = this.userIdToDelete.username;
+
+    return isActive
+      ? `¿Está seguro de eliminar el Usuario "${userName}"?`
+      : `¿Está seguro de reactivar el Usuario "${userName}"?`;
   }
 
   loadCatalogs() {
@@ -399,7 +440,6 @@ export class UsersComponent {
 
               const excludedRoles = [
                 'ADMIN',
-                'MEDICO',
                 'PACIENTE'
               ];
 

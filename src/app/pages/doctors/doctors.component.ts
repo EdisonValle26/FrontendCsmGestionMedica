@@ -34,7 +34,7 @@ export class DoctorsComponent {
   formFields: FormField[] = [
     { name: 'identification', label: 'Identificación', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10, disableOnEdit: true },
     { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [], disableOnEdit: true },
-    { name: 'license_number', label: 'Numero de Licencia', type: 'text', inputType: 'alphanumeric', required: true },
+    // { name: 'license_number', label: 'Numero de Licencia', type: 'text', inputType: 'alphanumeric', required: true },
     { name: 'first_name', label: 'Nombres', type: 'text', inputType: 'letters', required: true },
     { name: 'last_name', label: 'Apellidos', type: 'text', inputType: 'letters', required: true },
     { name: 'phone', label: 'Teléfono', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },

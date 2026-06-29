@@ -30,20 +30,16 @@ export class PatientsComponent {
   ];
 
   formFields: FormField[] = [
+    { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [] },
     { name: 'identification', label: 'Identificación', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },
     { name: 'first_name', label: 'Nombres', type: 'text', inputType: 'letters', required: true },
     { name: 'last_name', label: 'Apellidos', type: 'text', inputType: 'letters', required: true },
     { name: 'phone', label: 'Teléfono', type: 'text', inputType: 'number', required: true, minLength: 10, maxLength: 10 },
-    { name: 'email', label: 'Correo', type: 'text', inputType: 'email', required: true },
-    { name: 'address', label: 'Dirección', type: 'text', inputType: 'alphanumeric', required: true },
-    { name: 'birth_date', label: 'Fecha de Nacimiento', type: 'date', required: true },
-    { name: 'gender_id', label: 'Género', type: 'select', required: true, options: [] },
-    { name: 'document_type_id', label: 'Tipo Documento', type: 'select', required: true, options: [] },
+    { name: 'email', label: 'Correo', type: 'text', inputType: 'email' },
+    { name: 'address', label: 'Dirección', type: 'text', inputType: 'alphanumeric' },
     { name: 'nationality_id', label: 'Nacionalidad', type: 'select', required: true, options: [] },
-  ];
-
-  filtersConfig: FilterField[] = [
-    { name: 'value_field', label: 'Buscar paciente', type: 'text' }
+    { name: 'birth_date', label: 'Fecha de Nacimiento', type: 'date' },
+    { name: 'gender_id', label: 'Género', type: 'select', options: [] },
   ];
 
   currentFilters: any = {
@@ -53,6 +49,18 @@ export class PatientsComponent {
     field: ['first_name', 'last_name', 'identification', 'email', 'phone', 'address']
   };
 
+  filtersConfig: FilterField[] = [
+    {
+      name: 'status', label: 'Estado', type: 'select', width: 'w-48', defaultValue: this.currentFilters.status,
+      options: [
+        { label: 'Todos', value: 'ALL' },
+        { label: 'Activos', value: 'A' },
+        { label: 'Inactivos', value: 'I' }
+      ]
+    },
+    { name: 'value_field', label: 'Buscar paciente', type: 'text' },
+  ];
+
   /* PAGINACIÓN */
   totalPatients = 0;
   page = 1;
@@ -61,8 +69,7 @@ export class PatientsComponent {
 
   /* DELETE MODAL */
   showDeleteModal = false;
-  patientIdToDelete: number | null = null;
-
+  patientIdToDelete: any = null;
 
   constructor(
     private servicePatients: PatientsService,
@@ -104,7 +111,8 @@ export class PatientsComponent {
               address: item.persons?.address || '',
               gender_id: item.persons?.gender_id || null,
               nationality_id: item.persons?.nationality_id || null,
-              birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : ''
+              birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : '',
+              status: !item.deleted_at ? 'Activo' : 'Inactivo',
             };
           });
           this.loading = false;
@@ -112,9 +120,7 @@ export class PatientsComponent {
 
         error: () => {
           this.loading = false;
-          this.alertService.error(
-            'Error al cargar pacientes'
-          );
+          this.alertService.error('Error al cargar pacientes');
         }
       });
   }
@@ -201,16 +207,32 @@ export class PatientsComponent {
     }
   }
 
-  onDelete(id: number) {
-    this.patientIdToDelete = id;
-    this.showDeleteModal = true;
-  }
-
   onFilter(filters: any) {
+
     this.currentFilters = {
       ...this.currentFilters,
-      value_field: filters.value_field || ''
+      value_field: filters.value_field || '',
     };
+
+    if (filters.status === 'ALL') {
+      delete this.currentFilters.status;
+    } else {
+      this.currentFilters.status = filters.status;
+    }
+
+    this.filtersConfig = this.filtersConfig.map(f => {
+
+      if (f.name === 'status') {
+        return {
+          ...f,
+          value: filters.status
+        };
+      }
+
+      return f;
+    });
+
+    this.page = 1;
     this.loadPatients();
   }
 
@@ -225,7 +247,12 @@ export class PatientsComponent {
     this.loadPatients();
 
   }
-  
+
+  onDelete(patient: any) {
+    this.patientIdToDelete = patient;
+    this.showDeleteModal = true;
+  }
+
   confirmDelete() {
 
     if (!this.patientIdToDelete) {
@@ -233,23 +260,36 @@ export class PatientsComponent {
     }
 
     this.servicePatients
-      .delete(this.patientIdToDelete)
+      .delete(this.patientIdToDelete.id)
       .subscribe({
 
         next: () => {
-          this.alertService.success(
-            'Paciente eliminado correctamente'
-          );
+          this.alertService.success('Paciente eliminado/reactivado correctamente');
           this.loadPatients();
           this.showDeleteModal = false;
+          this.patientIdToDelete = null;
         },
 
         error: () => {
-          this.alertService.error(
-            'Error al eliminar paciente'
-          );
+          this.alertService.error('Error al eliminar/reactivar paciente');
         }
       });
+  }
+
+  getModalTitle(): string {
+    if (!this.patientIdToDelete) return '';
+    const isActive = this.patientIdToDelete.status === 'Activo';
+    return isActive ? 'Eliminar paciente' : 'Reactivar paciente';
+  }
+
+  getModalMessage(): string {
+    if (!this.patientIdToDelete) return '';
+    const isActive = this.patientIdToDelete.status === 'Activo';
+    const patientName = this.patientIdToDelete.identification;
+
+    return isActive
+      ? `¿Está seguro de eliminar el paciente "${patientName}"?`
+      : `¿Está seguro de reactivar el paciente "${patientName}"?`;
   }
 
   loadCatalogs() {

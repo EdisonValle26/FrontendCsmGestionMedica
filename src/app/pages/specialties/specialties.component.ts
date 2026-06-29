@@ -41,7 +41,7 @@ export class SpecialtiesComponent implements OnInit {
 
   formFields: FormField[] = [
     { name: 'name', label: 'Nombre', type: 'text', inputType: 'letters', required: true },
-    { name: 'description', label: 'Descripción', type: 'textarea', inputType: 'alphanumeric', required: true },
+    { name: 'description', label: 'Descripción', type: 'textarea', required: true },
     { name: 'icon', label: 'Icono', type: 'select', required: true, options: [] }
   ];
 
