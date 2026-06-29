@@ -7,6 +7,7 @@ import { User } from '../../core/interface/user.interface';
 import { AlertService } from '../../core/services/alert.service';
 import { CatalogsService } from '../../core/services/catalogs.service';
 import { DoctorService } from '../../core/services/doctor.service';
+import { SpecialtyService } from '../../core/services/specialty.service';
 import { UsersService } from '../../core/services/users.service';
 
 @Component({
@@ -74,16 +75,24 @@ export class DoctorsComponent {
   showDeleteModal = false;
   doctorIdToDelete: any = null;
 
+  //ESPECIALIDADES
+  showSpecialtyModal = false;
+  selectedDoctorSpecialty: any = null;
+  specialties: any[] = [];
+  selectedSpecialties: number[] = [];
+
   constructor(
     private serviceDoctors: DoctorService,
     private serviceUsers: UsersService,
     private alertService: AlertService,
-    private catalogsService: CatalogsService
+    private catalogsService: CatalogsService,
+    private specialtyService: SpecialtyService
   ) { }
 
   ngOnInit() {
     this.loadDoctors();
     this.loadCatalogs();
+    this.loadSpecialties();
   }
 
   loadDoctors() {
@@ -118,7 +127,10 @@ export class DoctorsComponent {
               nationality_id: item.persons?.nationality_id || null,
               birth_date: item.persons?.birth_date ? item.persons.birth_date.split('T')[0] : '',
               status: !item.deleted_at ? 'Activo' : 'Inactivo',
-              userId: item.persons?.users[0].id || null
+              userId: item.persons?.users[0].id || null,
+              specialties: item.doctor_specialties
+                ?.filter((x: any) => !x.deleted_at)
+                .map((x: any) => x.specialties) || []
             };
           });
           this.loading = false;
@@ -286,37 +298,89 @@ export class DoctorsComponent {
 
   onSave(data: User) {
 
-    const payload =  {
-        identification: data.identification,
-        license_number: data.license_number,
-        document_type_id: Number(data.document_type_id),
-        first_name: data.first_name,
-        last_name: data.last_name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        birth_date: data.birth_date,
-        gender_id: Number(data.gender_id),
-        nationality_id: Number(data.nationality_id),
-      };
-      console.log("this.selectedDoctors: ", this.selectedDoctors);
-      
-      this.serviceUsers
-        .update(this.selectedDoctors.userId, payload)
-        .subscribe({
+    const payload = {
+      identification: data.identification,
+      license_number: data.license_number,
+      document_type_id: Number(data.document_type_id),
+      first_name: data.first_name,
+      last_name: data.last_name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      birth_date: data.birth_date,
+      gender_id: Number(data.gender_id),
+      nationality_id: Number(data.nationality_id),
+    };
 
-          next: () => {
-            this.alertService.success('Doctor actualizado correctamente');
-            this.loadDoctors();
-            this.isModalOpen = false;
-          },
+    this.serviceUsers
+      .update(this.selectedDoctors.userId, payload)
+      .subscribe({
 
-          error: () => {
-            this.alertService.error('Error al actualizar Doctor');
-          }
-        });
-    
+        next: () => {
+          this.alertService.success('Doctor actualizado correctamente');
+          this.loadDoctors();
+          this.isModalOpen = false;
+        },
+
+        error: () => {
+          this.alertService.error('Error al actualizar Doctor');
+        }
+      });
+
   }
 
+  openSpecialties(doctor: any) {
+    this.selectedDoctorSpecialty = doctor;
+    this.selectedSpecialties = doctor.specialties?.map((x: any) => x.id) || [];
+    this.showSpecialtyModal = true;
+  }
+
+  toggleSpecialty(id: number) {
+    if (this.selectedSpecialties.includes(id)) {
+      this.selectedSpecialties =
+        this.selectedSpecialties.filter(
+          x => x !== id
+        );
+
+    } else {
+      this.selectedSpecialties.push(id);
+    }
+  }
+
+  saveSpecialties() {
+    const payload = {
+      doctor_id: this.selectedDoctorSpecialty.id,
+      specialty_ids: this.selectedSpecialties
+    };
+
+    this.serviceDoctors
+      .assignSpecialty(payload)
+      .subscribe({
+        next: () => {
+          this.alertService.success('Especialidades actualizadas');
+          this.showSpecialtyModal = false;
+          this.loadDoctors();
+        }
+      });
+  }
+
+  loadSpecialties() {
+
+    const filters = {
+      skip: 1,
+      take: 9999
+    };
+
+    this.specialtyService
+      .getAll(filters)
+      .subscribe({
+        next: (res) => {
+          this.specialties = res.data.map((x: any) => ({
+            id: x.id,
+            name: x.name
+          }));
+        }
+      });
+  }
 }
 

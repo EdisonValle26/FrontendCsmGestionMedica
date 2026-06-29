@@ -39,6 +39,9 @@ nav::-webkit-scrollbar {
   display: none;
 }
 
+#scroll-modal::-webkit-scrollbar {
+  display: none;
+}
 
 /* Scroll tabla */
 .table-scroll {

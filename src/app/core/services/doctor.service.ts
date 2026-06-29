@@ -47,12 +47,12 @@ export class DoctorService {
         );
     }
 
-    // create(payload: Doctor): Observable<any> {
-    //     return this.http.post<any>(
-    //         `${this.apiUrl}${API_ROUTES.DOCTORS}`,
-    //         payload
-    //     );
-    // }
+    assignSpecialty(payload: any): Observable<any> {
+        return this.http.post<any>(
+            `${this.apiUrl}${API_ROUTES.DOCTOR_SPECIALTIES}`,
+            payload
+        );
+    }
 
     update(id: number, payload: Doctor): Observable<any> {
         return this.http.put<any>(

@@ -1,8 +1,8 @@
 <div class="bg-white rounded-xl shadow overflow-hidden flex flex-col">
 
-     <div class="table-scroll overflow-x-auto overflow-y-auto max-h-[500px]">
+    <div class="table-scroll overflow-x-auto overflow-y-auto max-h-[500px]">
 
-        <table class="min-w-[1000px] w-full">
+        <table class="w-full table-fixed">
             <thead class="bg-gray-50">
                 <tr>
                     <th *ngFor="let col of columns" class="p-3 text-left text-sm text-gray-600">
@@ -28,7 +28,8 @@
                 </tr>
                 <!-- ROWS -->
                 <tr *ngFor="let row of data" class="border-t hover:bg-gray-50">
-                    <td *ngFor="let col of columns" class="p-3 text-left text-sm text-gray-600 whitespace-nowrap">
+                    <td *ngFor="let col of columns" 
+                        class="p-3 text-left text-sm text-gray-600 whitespace-normal break-words max-w-[200px]">
                         <!-- FORMAT -->
                         <ng-container *ngIf="col.format">
                             {{ col.format(row[col.field]) }}
@@ -55,6 +56,9 @@
                         </button>
                         <button (click)="edit.emit(row)">
                             <i class="fa-solid fa-pen-to-square" style="color: rgb(19, 142, 241)"></i>
+                        </button>
+                        <button *ngIf="assignSpecialty" (click)="specialty.emit(row)" title="Asignar especialidades">
+                            <i class="fa-solid fa-stethoscope text-purple-600"></i>
                         </button>
                         <button (click)="delete.emit(row)">
                             <i class="fa-solid"

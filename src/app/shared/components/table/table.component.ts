@@ -12,6 +12,7 @@ export class TableComponent {
   @Input() data: any[] = [];
   @Input() columns: TableColumn[] = [];
   @Input() loading = false;
+  @Input() assignSpecialty = false;
 
   /* PAGINACIÓN */
   @Input() total = 0;
@@ -24,6 +25,7 @@ export class TableComponent {
   @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
+  @Output() specialty = new EventEmitter<any>();
 
   get totalPages(): number {
     return Math.ceil(
