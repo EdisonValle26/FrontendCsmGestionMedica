@@ -35,7 +35,6 @@ export class DoctorSchedulesComponent implements OnInit {
   assignDoctorForm: FormGroup;
   bulkAssignMode = false;
 
-
   modalMode: 'create' | 'edit' | 'assign' = 'create';
 
   selectedSchedule: DoctorSchedule | null = null;
@@ -54,7 +53,7 @@ export class DoctorSchedulesComponent implements OnInit {
   // Colores para médicos
   doctorColors: { [key: number]: string } = {};
   consultorios: any[] = [];
-
+  consultorioBloqueado = false;
   constructor(
     private fb: FormBuilder,
     private alertService: AlertService,
@@ -71,8 +70,7 @@ export class DoctorSchedulesComponent implements OnInit {
     });
 
     this.assignDoctorForm = this.fb.group({
-      doctor_id: ['', Validators.required],
-      consultorio_id:['',Validators.required],
+      consultorio_id: ['', Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
       slot_duration: [30, Validators.required],
@@ -84,10 +82,8 @@ export class DoctorSchedulesComponent implements OnInit {
     this.generateWeekHours();
     this.updateWeekDays();
     this.loadDoctors();
-    this.loadAllSchedules();
     this.loadConsultorios();
   }
-
 
   loadDoctors() {
 
@@ -131,10 +127,10 @@ export class DoctorSchedulesComponent implements OnInit {
       });
   }
 
-  loadAllSchedules() {
+  loadAllSchedules(doctorId: number) {
 
     this.scheduleService
-      .getByDoctor(1)
+      .getByDoctor(doctorId)
       .subscribe({
         next: (res) => {
 
@@ -217,24 +213,7 @@ export class DoctorSchedulesComponent implements OnInit {
       start_time: '08:00',
       end_time: '12:00',
       slot_duration: 30,
-      consultorio_id:''
-    });
-
-    this.isScheduleModalOpen = true;
-  }
-
-  editSchedule(schedule: DoctorSchedule) {
-
-    this.modalMode = 'edit';
-
-    this.selectedSchedule = schedule;
-    this.selectedDay = new Date(schedule.schedule_date);
-
-    this.scheduleForm.patchValue({
-      start_time: schedule.start_time,
-      end_time: schedule.end_time,
-      slot_duration: schedule.slot_duration,
-      consultorio_id: schedule.consultorio_id
+      consultorio_id: ''
     });
 
     this.isScheduleModalOpen = true;
@@ -270,7 +249,7 @@ export class DoctorSchedulesComponent implements OnInit {
       consultorio_id: Number(value.consultorio_id),
       schedules: [
         {
-          schedule_date: this.selectedDay.toISOString().substring(0, 10),
+          schedule_date: this.formatDate(this.selectedDay),
           start_time: value.start_time,
           end_time: value.end_time,
           slot_duration: Number(value.slot_duration)
@@ -291,6 +270,13 @@ export class DoctorSchedulesComponent implements OnInit {
           );
         }
       });
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   // ==================== VISTA SEMANAL ====================
@@ -332,12 +318,12 @@ export class DoctorSchedulesComponent implements OnInit {
 
   openContextMenu(event: MouseEvent, hourIndex: number, dayIndex: number) {
     event.preventDefault();
+    if (!this.selectedDoctor) return;
     this.clearSelection();
     this.selectedCellIndices = [{ hourIndex, dayIndex }];
     this.bulkAssignMode = false;
     this.assignDoctorForm.reset({
-      doctor_id: '',
-      consultorio_id:'',
+      consultorio_id: '',
       start_time: this.weekHours[hourIndex],
       end_time: `${parseInt(this.weekHours[hourIndex].split(':')[0]) + 1}:00`,
       slot_duration: 30,
@@ -350,7 +336,6 @@ export class DoctorSchedulesComponent implements OnInit {
 
     this.weeklyMatrix = this.weekHours.map(() => Array(7).fill(null));
 
-
     this.schedules.forEach(schedule => {
 
       const doctor = this.doctors.find(
@@ -359,68 +344,32 @@ export class DoctorSchedulesComponent implements OnInit {
 
       if (!doctor) return;
 
-
       const scheduleDate = schedule.schedule_date.substring(0, 10);
 
-
       const dayIndex = this.weekDays.findIndex(d => {
-
-        const date =
-          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-
+        const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         return date === scheduleDate;
-
       });
 
-
       if (dayIndex === -1) return;
-
-
 
       const startMinutes = this.timeToMinutes(schedule.start_time);
       const endMinutes = this.timeToMinutes(schedule.end_time);
 
-
-
       for (let hourIndex = 0; hourIndex < this.weekHours.length; hourIndex++) {
-
-
         const cellStart = this.timeToMinutes(this.weekHours[hourIndex]);
         const cellEnd = cellStart + 60;
 
-
         // Si el horario toca esta hora
-        if (
-          startMinutes < cellEnd &&
-          endMinutes > cellStart
-        ) {
-
-
-          const occupiedStart = Math.max(
-            startMinutes,
-            cellStart
-          );
-
-
-          const occupiedEnd = Math.min(
-            endMinutes,
-            cellEnd
-          );
-
-
-          const minutesOccupied =
-            occupiedEnd - occupiedStart;
-
-
-          const percentage =
-            (minutesOccupied / 60) * 100;
-
-
+        if (startMinutes < cellEnd && endMinutes > cellStart) {
+          const occupiedStart = Math.max(startMinutes, cellStart);
+          const occupiedEnd = Math.min(endMinutes, cellEnd);
+          const minutesOccupied = occupiedEnd - occupiedStart;
+          const percentage = (minutesOccupied / 60) * 100;
 
           if (!this.weeklyMatrix[hourIndex][dayIndex]) {
             this.weeklyMatrix[hourIndex][dayIndex] = [];
           }
-
 
           // evitar duplicados
           const exists =
@@ -428,36 +377,23 @@ export class DoctorSchedulesComponent implements OnInit {
               .some(
                 (x: any) => x.doctor.id === doctor.id
               );
-console.log("schedule: ", );
 
 
           if (!exists) {
-
             this.weeklyMatrix[hourIndex][dayIndex]
               .push({
-
                 doctor,
-
                 schedule,
-
                 consultorio:
                   this.consultorios.find(
                     c => c.id === schedule.consultorio_id
                   )?.name,
-
                 percentage
-
               });
-
           }
-
         }
-
       }
-
-
     });
-
   }
 
   timeToMinutes(time: string) {
@@ -530,26 +466,32 @@ console.log("schedule: ", );
 
     const start = this.weekHours[first.hourIndex];
 
-    let doctorAsignado = '';
-let consultorioAsignado = '';
+    let consultorioAsignado = '';
+    this.consultorioBloqueado = false;
 
     const cellData = this.weeklyMatrix[first.hourIndex]?.[first.dayIndex];
 
-    console.log("cellData: ", cellData);
-    
-    if (cellData && cellData.length > 0) {
-      doctorAsignado = cellData[0].doctor.id;
+    if (cellData?.length) {
       consultorioAsignado = cellData[0].schedule.consultorio_id;
+      this.consultorioBloqueado = true;
     }
 
+    const startHour = Number(start.split(':')[0]);
+    const end = `${String(startHour + 1).padStart(2, '0')}:00`;
+
     this.assignDoctorForm.reset({
-      doctor_id: doctorAsignado,
       consultorio_id: consultorioAsignado,
       start_time: start,
-      end_time: `${String(parseInt(start) + 1).padStart(2, '0')}:00`,
+      end_time: end,
       slot_duration: 30,
       applyToAll: false
     });
+
+    if (this.consultorioBloqueado) {
+      this.assignDoctorForm.get('consultorio_id')?.disable();
+    } else {
+      this.assignDoctorForm.get('consultorio_id')?.enable();
+    }
 
     this.isAssignDoctorModalOpen = true;
   }
@@ -579,26 +521,26 @@ let consultorioAsignado = '';
       return;
     }
 
-    const formValue = this.assignDoctorForm.value;
+    const formValue = this.assignDoctorForm.getRawValue();
 
     const grouped: any = {};
 
     this.selectedCellIndices.forEach(cell => {
 
-      const day =
-        this.weekDays[cell.dayIndex]
-          .toISOString()
-          .substring(0, 10);
-
+      const day = this.formatDate(this.weekDays[cell.dayIndex]);
 
       const hour = this.weekHours[cell.hourIndex];
 
       if (!grouped[day]) {
 
+        const nextHour = `${String(
+          Number(hour.split(':')[0]) + 1
+        ).padStart(2, '0')}:00`;
+
         grouped[day] = {
           schedule_date: day,
           start_time: hour,
-          end_time: hour,
+          end_time: nextHour,
           slot_duration: formValue.slot_duration
         };
 
@@ -624,8 +566,8 @@ let consultorioAsignado = '';
     });
 
     const payload = {
-      doctor_id: Number(formValue.doctor_id),
-      consultorio_id:Number(formValue.consultorio_id),
+      doctor_id: this.selectedDoctor!.id,
+      consultorio_id: Number(formValue.consultorio_id),
       schedules: Object.values(grouped)
     };
 
@@ -636,7 +578,7 @@ let consultorioAsignado = '';
           this.alertService.success(`${res.total} horarios creados`);
           this.isAssignDoctorModalOpen = false;
           this.clearSelection();
-          this.loadAllSchedules();
+          this.loadAllSchedules(this.selectedDoctor!.id);
         },
 
         error: (err) => {
