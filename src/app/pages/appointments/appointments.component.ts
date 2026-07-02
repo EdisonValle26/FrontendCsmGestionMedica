@@ -35,9 +35,9 @@ export class AppointmentsComponent {
   ];
 
   formFields: FormField[] = [
-    { name: 'patient_id', label: 'Paciente', type: 'select', required: true, options: [] },
-    { name: 'doctor_id', label: 'Doctor', type: 'select', required: true, options: [] },
-    { name: 'specialty_id', label: 'Especialidad', type: 'select', required: true, options: [] },
+    { name: 'patient_id', label: 'Paciente', type: 'select', required: true, options: [], disableOnEdit: true},
+    { name: 'doctor_id', label: 'Doctor', type: 'select', required: true, options: [], disableOnEdit: true },
+    { name: 'specialty_id', label: 'Especialidad', type: 'select', required: true, options: [], disableOnEdit: true },
     { name: 'appointment_type_id', label: 'Tipo', type: 'select', required: true, options: [] },
     { name: 'appointment_status_id', label: 'Estado', type: 'select', required: true, options: [] },
     { name: 'appointment_date', label: 'Fecha', type: 'date', required: true },

@@ -49,6 +49,12 @@ export class AppointmentsService {
         );
     }
 
+    getPatientIdAppointment(patientId: number): Observable<any> {
+        return this.http.get<any>(
+            `${this.apiUrl}${API_ROUTES.APPOINTMENTS}/patientId/${patientId}`
+        );
+    }
+
     create(payload: Appointment): Observable<any> {
         return this.http.post<any>(
             `${this.apiUrl}${API_ROUTES.APPOINTMENTS}`,

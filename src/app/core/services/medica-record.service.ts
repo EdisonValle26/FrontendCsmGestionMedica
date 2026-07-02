@@ -45,6 +45,12 @@ export class MedicalRecordsService {
         );
     }
 
+    getPatientId(patientId: number): Observable<any> {
+        return this.http.get<any>(
+            `${this.apiUrl}${API_ROUTES.MEDICAL_RECORDS}/patientId/${patientId}`
+        );
+    }
+
     create(payload: any): Observable<any> {
         return this.http.post<any>(
             `${this.apiUrl}${API_ROUTES.MEDICAL_RECORDS}`,
