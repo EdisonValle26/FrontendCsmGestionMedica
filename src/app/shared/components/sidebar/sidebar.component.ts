@@ -13,7 +13,6 @@ export class SidebarComponent {
 
   @Input() isOpen = true;
   @Output() toggle = new EventEmitter<void>();
-  @Output() optionSelected = new EventEmitter<string>();
 
   user: any;
 
@@ -33,10 +32,6 @@ export class SidebarComponent {
 
   isExactRoute(route: string): boolean {
     return route === API_ROUTES.DASHBOARD;
-  }
-
-  selectOption(name: string) {
-    this.optionSelected.emit(name);
   }
 
 }

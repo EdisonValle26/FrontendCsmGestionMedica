@@ -28,7 +28,6 @@
 
         <a *ngFor="let option of user?.options" 
             [routerLink]="option.route"
-            (click)="selectOption(option.name)"
             routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
             [routerLinkActiveOptions]="{ exact: isExactRoute(option.route) }"
             class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition">
