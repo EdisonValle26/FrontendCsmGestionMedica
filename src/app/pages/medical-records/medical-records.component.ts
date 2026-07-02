@@ -40,38 +40,11 @@ export class MedicalRecordsComponent implements OnInit {
   ];
 
   formFields: FormField[] = [
-    {
-      name: 'appointment_id',
-      label: 'Cita',
-      type: 'select',
-      required: true,
-      options: []
-    },
-    {
-      name: 'disease_id',
-      label: 'Enfermedad',
-      type: 'select',
-      required: true,
-      options: []
-    },
-    {
-      name: 'diagnosis',
-      label: 'Diagnóstico',
-      type: 'textarea',
-      required: true
-    },
-    {
-      name: 'treatment',
-      label: 'Tratamiento',
-      type: 'textarea',
-      required: true
-    },
-    {
-      name: 'observations',
-      label: 'Observaciones',
-      type: 'textarea',
-      required: false
-    }
+    { name: 'appointment_id', label: 'Cita', type: 'select', required: true, options: [], disableOnEdit: true },
+    { name: 'disease_id', label: 'Enfermedad', type: 'select', required: true, options: [] },
+    { name: 'diagnosis', label: 'Diagnóstico', type: 'textarea', required: true },
+    { name: 'treatment', label: 'Tratamiento', type: 'textarea', required: true },
+    { name: 'observations', label: 'Observaciones', type: 'textarea', required: false }
   ];
 
   patientStats = {
@@ -90,8 +63,6 @@ export class MedicalRecordsComponent implements OnInit {
   ngOnInit(): void {
     this.loadDiseases();
     this.loadPatients();
-    this.loadMedicalRecords();
-    this.loadAppointments();
   }
 
   loadDiseases(): void {
@@ -112,13 +83,12 @@ export class MedicalRecordsComponent implements OnInit {
   openCreate(): void {
 
     if (!this.selectedPatient) {
-      this.alertService.warning(
-        'Seleccione un paciente primero'
-      );
+      this.alertService.warning('Seleccione un paciente primero');
       return;
     }
 
     this.selectedMedicalRecord = {
+      id: null,
       appointment_id: '',
       disease_id: '',
       diagnosis: '',
@@ -131,20 +101,53 @@ export class MedicalRecordsComponent implements OnInit {
   }
 
   onEdit(record: any): void {
+    this.medicalRecordsService
+      .getById(record.id)
+      .subscribe({
 
-    this.selectedMedicalRecord = {
-      ...record
-    };
+        next: (res) => {
 
-    this.mode = 'edit';
-    this.isModalOpen = true;
+          const medicalRecord = res.data;
+
+          const field = this.formFields.find(f => f.name === 'appointment_id');
+
+          if (field) {
+            field.options = [
+              {
+                value: medicalRecord.appointments.id,
+                label: `${this.selectedPatient?.first_name} ${this.selectedPatient?.last_name} - ${medicalRecord.appointments.appointment_date.split('T')[0]}`
+              },
+            ];
+          }
+
+          this.selectedMedicalRecord = {
+            id: medicalRecord.id,
+            appointment_id: medicalRecord.appointment_id,
+            disease_id: medicalRecord.disease_id,
+            diagnosis: medicalRecord.diagnosis,
+            treatment: medicalRecord.treatment,
+            observations: medicalRecord.observations
+          };
+
+          this.mode = 'edit';
+          this.isModalOpen = true;
+        },
+
+        error: (err) => {
+          this.alertService.error(
+            err.error?.message || 'Error al cargar el historial clínico'
+          );
+        }
+
+      });
+
   }
 
   onSave(data: any): void {
 
     const payload = {
-      appointment_id: data.appointment_id,
-      disease_id: data.disease_id,
+      appointment_id: Number(data.appointment_id),
+      disease_id: Number(data.disease_id),
       diagnosis: data.diagnosis,
       treatment: data.treatment,
       observations: data.observations
@@ -152,62 +155,63 @@ export class MedicalRecordsComponent implements OnInit {
 
     if (this.selectedMedicalRecord?.id) {
 
-      console.log('UPDATE', payload);
+      this.medicalRecordsService
+        .update(this.selectedMedicalRecord.id, payload)
+        .subscribe({
 
-      this.alertService.success(
-        'Historial clínico actualizado correctamente'
-      );
+          next: () => {
+            this.alertService.success('Historial clínico actualizado correctamente');
+            this.isModalOpen = false;
 
+            if (this.selectedPatient) {
+              this.loadMedicalRecords(this.selectedPatient.id!);
+            }
+          },
+
+          error: (err) => {
+            this.alertService.error(err.error?.message || 'Error al actualizar historial clínico');
+          }
+        });
     } else {
 
-      console.log('CREATE', payload);
+      this.medicalRecordsService
+        .create(payload)
+        .subscribe({
 
-      this.alertService.success(
-        'Historial clínico creado correctamente'
-      );
+          next: () => {
+            this.alertService.success('Historial clínico creado correctamente');
+            this.isModalOpen = false;
+            if (this.selectedPatient) {
+              this.loadMedicalRecords(this.selectedPatient.id!);
+            }
+          },
+
+          error: (err) => {
+            this.alertService.error(err.error?.message || 'Error al crear historial clínico');
+          }
+
+        });
+
     }
 
-    this.isModalOpen = false;
   }
 
-  onDelete(record: any): void {
-    this.medicalRecordToDelete = record;
-    this.showDeleteModal = true;
-  }
+  // onDelete(record: any): void {
+  //   this.medicalRecordToDelete = record;
+  //   this.showDeleteModal = true;
+  // }
 
-  confirmDelete(): void {
+  // confirmDelete(): void {
 
-    if (!this.medicalRecordToDelete) {
-      return;
-    }
+  //   if (!this.medicalRecordToDelete) {
+  //     return;
+  //   }
 
-    console.log('DELETE', this.medicalRecordToDelete.id);
+  //   this.alertService.success('Historial clínico eliminado correctamente');
 
-    this.alertService.success(
-      'Historial clínico eliminado correctamente'
-    );
-
-    this.showDeleteModal = false;
-    this.medicalRecordToDelete = null;
-  }
-
-  getModalTitle(): string {
-
-    if (!this.medicalRecordToDelete) {
-      return '';
-    }
-
-    return 'Eliminar historial clínico';
-  }
-
-  getModalMessage(): string {
-
-    if (!this.medicalRecordToDelete) {
-      return '';
-    }
-
-    return `¿Está seguro de eliminar este historial clínico?`;
-  }
+  //   this.showDeleteModal = false;
+  //   this.medicalRecordToDelete = null;
+  // }
 
   get filteredPatients(): Patient[] {
 
@@ -225,8 +229,13 @@ export class MedicalRecordsComponent implements OnInit {
   }
 
   selectPatient(patient: Patient): void {
+    if (!patient) {
+      return;
+    }
+
     this.selectedPatient = patient;
-    this.calculatePatientStats();
+    this.loadMedicalRecords(patient.id!);
+    this.loadAppointments(patient.id!);
   }
 
   calculatePatientStats(): void {
@@ -236,15 +245,13 @@ export class MedicalRecordsComponent implements OnInit {
     }
 
     const patientRecords = this.medicalRecords.filter(
-      record => record.appointments.patient_id === this.selectedPatient!.id
+      record => record.appointments?.patient_id === this.selectedPatient!.id
     );
 
     this.patientStats = {
       totalVisits: patientRecords.length,
       totalDiagnostics: patientRecords.length,
-      totalPrescriptions: patientRecords.filter(
-        r => r.treatment
-      ).length
+      totalPrescriptions: patientRecords.filter(r => r.treatment).length
     };
   }
 
@@ -255,7 +262,7 @@ export class MedicalRecordsComponent implements OnInit {
     }
 
     return this.medicalRecords.filter(
-      record => record.appointments.patient_id === this.selectedPatient!.id
+      record => record.appointments?.patient_id === this.selectedPatient!.id
     );
   }
 
@@ -303,24 +310,18 @@ export class MedicalRecordsComponent implements OnInit {
 
         error: () => {
           this.loading = false;
-          this.alertService.error(
-            'Error al cargar pacientes'
-          );
+          this.alertService.error('Error al cargar pacientes');
         }
       });
   }
 
-  loadMedicalRecords(): void {
+  loadMedicalRecords(patientId: number): void {
 
     this.loading = true;
 
-    const filters = {
-      skip: 1,
-      take: 9999
-    };
 
     this.medicalRecordsService
-      .getAll(filters)
+      .getPatientId(patientId)
       .subscribe({
 
         next: (res) => {
@@ -328,54 +329,37 @@ export class MedicalRecordsComponent implements OnInit {
           this.medicalRecords = res.data.map((item: any) => {
 
             return {
-
               id: item.id,
-
               appointment_id: item.appointment_id,
               disease_id: item.disease_id,
-
               diagnosis: item.diagnosis,
               treatment: item.treatment,
               observations: item.observations,
-
               created_at: item.created_at,
               updated_at: item.updated_at,
               deleted_at: item.deleted_at,
-
               appointments: item.appointments,
-
               catalogs: item.catalogs
-
             };
 
           });
 
+          this.calculatePatientStats();
           this.loading = false;
-
         },
 
         error: () => {
-
           this.loading = false;
-
-          this.alertService.error(
-            'Error al cargar historial clínico'
-          );
-
+          this.alertService.error('Error al cargar historial clínico');
         }
 
       });
-
   }
-  loadAppointments(): void {
 
-    const filters = {
-      skip: 1,
-      take: 9999
-    };
+  loadAppointments(patientId: number): void {
 
     this.serviceAppointment
-      .getAll(filters)
+      .getPatientIdAppointment(patientId)
       .subscribe({
 
         next: (res) => {
@@ -416,12 +400,18 @@ export class MedicalRecordsComponent implements OnInit {
   }
 
   getLastAppointmentDate(patient: Patient): string {
-    const lastRecord = this.medicalRecords
-      .filter(r => r.appointments.patient_id === patient.id)
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+    const lastRecord = this.medicalRecords.filter(r => r.appointments?.patient_id === patient.id)
+      .sort(
+        (a, b) =>
+          new Date(b.appointments?.appointment_date).getTime()
+          -
+          new Date(a.appointments?.appointment_date).getTime()
+      )[0];
 
-    if (!lastRecord) return 'Sin visitas';
-    return this.formatDate(lastRecord.created_at);
+    if (!lastRecord?.appointments) {
+      return 'Sin visitas';
+    }
+
+    return this.formatDate(lastRecord.appointments?.appointment_date);
   }
-
 }
